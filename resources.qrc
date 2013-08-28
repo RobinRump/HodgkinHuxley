@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/resources">
+        <file>resources/controls.png</file>
+        <file>resources/expo.png</file>
+        <file>resources/slider.png</file>
+    </qresource>
+</RCC>
