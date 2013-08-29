@@ -102,7 +102,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // settings
     QJsonDocument document;
     QJsonObject json;
-    QFile file(QDir::toNativeSeparators(QDir::homePath() + "/HH/config.json"));
+    QFile file(QDir::toNativeSeparators(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + "/hodgkinhuxley.json"));
     QByteArray bytes;
     if (file.exists()) {
         file.open(QIODevice::ReadOnly | QIODevice::Text);
@@ -110,7 +110,6 @@ MainWindow::MainWindow(QWidget *parent) :
         file.close();
         document.fromBinaryData(bytes);
         json = document.object();
-        qDebug() << json;
     } else {
         json.insert("startup", true);
         document.setObject(json);
@@ -287,6 +286,8 @@ void MainWindow::changeCurrentMode(int m) {
             this->cMode = m;
             ui->currentSlider->setEnabled(true);
             ui->impulseButton->setEnabled(true);
+            ui->impulseDuration->setEnabled(true);
+            ui->impulseMagnitude->setEnabled(true);
             ui->impulseMagnitude->setValue(0);
             ui->impulseDuration->setValue(0);
             ui->currentSlider->setValue(0);
@@ -300,6 +301,8 @@ void MainWindow::changeCurrentMode(int m) {
             this->impulseDuration = ui->impulseDuration->value();
             this->impulseStart = this->j;
             ui->impulseButton->setEnabled(false);
+            ui->impulseDuration->setEnabled(false);
+            ui->impulseMagnitude->setEnabled(false);
         break;
     }
 }
