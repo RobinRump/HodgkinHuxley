@@ -33,6 +33,7 @@ Settings::Settings(QWidget *parent) :
     ui->setupUi(this);
     this->setWindowTitle("Preferences");
 
+    // connect ui elements with slots
     connect(ui->buttonBox, SIGNAL(accepted()), this->parent(), SLOT(updatePreferences()));
     connect(ui->buttonBox, SIGNAL(rejected()), this->parent(), SLOT(pause()));
 }

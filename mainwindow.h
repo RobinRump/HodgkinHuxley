@@ -30,20 +30,21 @@
 #include "settings.h"
 #include "welcome.h"
 
-#include <QMainWindow>
-#include <QVector>
-#include <QTimer>
+#include <QByteArray>
+#include <QDataStream>
 #include <QDateTime>
-#include <QTime>
-#include <QSignalMapper>
-#include <QMessageBox>
+#include <QFile>
+#include <QFileDialog>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonValue>
-#include <QByteArray>
-#include <QDataStream>
-#include <QFile>
-#include <QFileDialog>
+#include <QMainWindow>
+#include <QMessageBox>
+#include <QSignalMapper>
+#include <QStandardPaths>
+#include <QTime>
+#include <QTimer>
+#include <QVector>
 
 namespace Ui {
 class MainWindow;
@@ -73,6 +74,9 @@ public:
 
     void init();
 
+    QJsonObject fromConfig();
+    bool toConfig(QJsonObject j);
+
 private:
     Ui::MainWindow *ui;
 
@@ -95,9 +99,15 @@ private:
     Settings *s;
     Welcome *w;
 
+    QFile *config;
+
     double alphaN(double v); double betaN(double v);
     double alphaM(double v); double betaM(double v);
     double alphaH(double v); double betaH(double v);
+
+public slots:
+    void updatePreferences();
+    int minCurrentValue();
 
 private slots:
     void updatePlot();
@@ -120,10 +130,6 @@ private slots:
     void welcome();
 
     void toJson();
-
-public slots:
-    void updatePreferences();
-    int minCurrentValue();
 };
 
 #endif // MAINWINDOW_H
