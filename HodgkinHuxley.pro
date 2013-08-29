@@ -27,7 +27,10 @@ FORMS    += mainwindow.ui \
     settings.ui \
     welcome.ui
 
-OTHER_FILES +=
+OTHER_FILES += \
+    README.md \
+    LICENSE \
+    CHANGELOG.md
 
 RESOURCES += \
     resources.qrc
