@@ -30,21 +30,21 @@
 #include "settings.h"
 #include "welcome.h"
 
-#include <QMainWindow>
-#include <QVector>
-#include <QTimer>
+#include <QByteArray>
+#include <QDataStream>
 #include <QDateTime>
-#include <QTime>
-#include <QSignalMapper>
-#include <QMessageBox>
+#include <QFile>
+#include <QFileDialog>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonValue>
-#include <QByteArray>
-#include <QDataStream>
-#include <QFile>
-#include <QFileDialog>
+#include <QMainWindow>
+#include <QMessageBox>
+#include <QSignalMapper>
 #include <QStandardPaths>
+#include <QTime>
+#include <QTimer>
+#include <QVector>
 
 namespace Ui {
 class MainWindow;
