@@ -35,6 +35,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->setWindowTitle("HodgkinHuxley Simulator - Robin Rump");
 
     this->timer = new QTimer(this);
+    this->config = new QFile(QDir::toNativeSeparators(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + "/com.robinrump.hodgkinhuxley.json"));
 
     this->blank.resize(1);
     this->dt       = 0.025;  // ms
@@ -99,25 +100,14 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->plot->yAxis2->setRange(0, 1);
     ui->plot->replot();
 
-    // settings
-    QJsonDocument document;
+    // config
     QJsonObject json;
-    QFile file(QDir::toNativeSeparators(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + "/com.robinrump.hodgkinhuxley.json"));
-    QByteArray bytes;
-    if (file.exists()) {
-        file.open(QIODevice::ReadOnly | QIODevice::Text);
-        bytes = file.readAll();
-        file.close();
-        document.fromJson(bytes);
-        json = document.object();
+    if (this->config->exists()) {
+        json = this->fromConfig();
     } else {
         json.insert("startup", true);
         json.insert("version", 101);
-        document.setObject(json);
-        bytes = document.toJson();
-        file.open(QIODevice::WriteOnly | QIODevice::Text);
-        file.write(bytes);
-        file.close();
+        this->toConfig(json);
     }
 
     connect(ui->currentSlider, SIGNAL(valueChanged(int)), this, SLOT(updateCurrent()));
@@ -227,6 +217,30 @@ void MainWindow::updatePlot() {
 
     this->timer->start(this->interval);
 }
+
+QJsonObject MainWindow::fromConfig() {
+    QJsonDocument document;
+    QByteArray bytes;
+    if (!this->config->open(QIODevice::ReadOnly | QIODevice::Text)) {
+        return QJsonObject();
+    }
+    bytes = this->config->readAll();
+    this->config->close();
+    document = QJsonDocument::fromJson(bytes);
+    return document.object();
+}
+
+bool MainWindow::toConfig(QJsonObject j) {
+    QJsonDocument document(j);
+    QByteArray bytes = document.toJson();
+    if (!this->config->open(QIODevice::WriteOnly | QIODevice::Text)) {
+        return false;
+    }
+    this->config->write(bytes);
+    this->config->close();
+    return true;
+}
+
 
 void MainWindow::updateCurrent() {
     this->cI = ui->currentSlider->value();

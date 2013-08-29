@@ -74,6 +74,9 @@ public:
 
     void init();
 
+    QJsonObject fromConfig();
+    bool toConfig(QJsonObject j);
+
 private:
     Ui::MainWindow *ui;
 
@@ -96,9 +99,15 @@ private:
     Settings *s;
     Welcome *w;
 
+    QFile *config;
+
     double alphaN(double v); double betaN(double v);
     double alphaM(double v); double betaM(double v);
     double alphaH(double v); double betaH(double v);
+
+public slots:
+    void updatePreferences();
+    int minCurrentValue();
 
 private slots:
     void updatePlot();
@@ -121,10 +130,6 @@ private slots:
     void welcome();
 
     void toJson();
-
-public slots:
-    void updatePreferences();
-    int minCurrentValue();
 };
 
 #endif // MAINWINDOW_H
