@@ -25,6 +25,9 @@
    <property name="text">
     <string>Show this on startup</string>
    </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
   </widget>
   <widget class="QPushButton" name="closeButton">
    <property name="geometry">

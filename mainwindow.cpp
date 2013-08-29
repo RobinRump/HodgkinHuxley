@@ -102,16 +102,17 @@ MainWindow::MainWindow(QWidget *parent) :
     // settings
     QJsonDocument document;
     QJsonObject json;
-    QFile file(QDir::toNativeSeparators(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + "/hodgkinhuxley.json"));
+    QFile file(QDir::toNativeSeparators(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + "/com.robinrump.hodgkinhuxley.json"));
     QByteArray bytes;
     if (file.exists()) {
         file.open(QIODevice::ReadOnly | QIODevice::Text);
         bytes = file.readAll();
         file.close();
-        document.fromBinaryData(bytes);
+        document.fromJson(bytes);
         json = document.object();
     } else {
         json.insert("startup", true);
+        json.insert("version", 101);
         document.setObject(json);
         bytes = document.toJson();
         file.open(QIODevice::WriteOnly | QIODevice::Text);
