@@ -19,8 +19,8 @@
 ****************************************************************************
 **           Author: Emanuel Eichhammer                                   **
 **  Website/Contact: http://www.qcustomplot.com/                          **
-**             Date: 19.05.13                                             **
-**          Version: 1.0.0-beta                                           **
+**             Date: 01.08.13                                             **
+**          Version: 1.0.0                                                **
 ****************************************************************************/
 
 #include "qcustomplot.h"
@@ -2049,7 +2049,17 @@ QList<QCPLayoutElement*> QCPLayoutElement::elements(bool recursive) const
   return QList<QCPLayoutElement*>();
 }
 
-/* inherits documentation from base class */
+/*!
+  Layout elements are sensitive to events inside their outer rect. If \a pos is within the outer
+  rect, this method returns a value corresponding to 0.99 times the parent plot's selection
+  tolerance. However, layout elements are not selectable by default. So if \ref onlySelectable is
+  true, -1.0 is returned.
+  
+  See \ref QCPLayerable::selectTest for a general explanation of this virtual method.
+  
+  QCPLayoutElement subclasses may reimplement this method to provide more specific selection test
+  behaviour.
+*/
 double QCPLayoutElement::selectTest(const QPointF &pos, bool onlySelectable, QVariant *details) const
 {
   Q_UNUSED(details)
@@ -2064,7 +2074,7 @@ double QCPLayoutElement::selectTest(const QPointF &pos, bool onlySelectable, QVa
     else
     {
       qDebug() << Q_FUNC_INFO << "parent plot not defined";
-      return 3;
+      return -1;
     }
   } else
     return -1;
@@ -2077,7 +2087,7 @@ double QCPLayoutElement::selectTest(const QPointF &pos, bool onlySelectable, QVa
 */
 void QCPLayoutElement::parentPlotInitialized(QCustomPlot *parentPlot)
 {
-  QList<QCPLayoutElement*> els = elements();
+  QList<QCPLayoutElement*> els = elements(false);
   for (int i=0; i<els.size(); ++i)
   {
     if (!els.at(i)->parentPlot())
@@ -2286,19 +2296,6 @@ void QCPLayout::clear()
       removeAt(i);
   }
   simplify();
-}
-
-/*!
-  Since layouts usually are invisible and only responsible for positioning and sizing of child
-  elements, they are not selectable or mouse-hittable by default. So this function always returns
-  -1. Specific Layout subclasses may override this behaviour.
-*/
-double QCPLayout::selectTest(const QPointF &pos, bool onlySelectable, QVariant *details) const
-{
-  Q_UNUSED(pos)
-  Q_UNUSED(onlySelectable)
-  Q_UNUSED(details)
-  return -1;
 }
 
 /*!
@@ -3338,6 +3335,31 @@ bool QCPLayoutInset::take(QCPLayoutElement *element)
   } else
     qDebug() << Q_FUNC_INFO << "Can't take null element";
   return false;
+}
+
+/*!
+  The inset layout is sensitive to events only at areas where its child elements are sensitive. If
+  the selectTest method of any of the child elements returns a positive number for \a pos, this
+  method returns a value corresponding to 0.99 times the parent plot's selection tolerance. The
+  inset layout is not selectable itself by default. So if \ref onlySelectable is true, -1.0 is
+  returned.
+  
+  See \ref QCPLayerable::selectTest for a general explanation of this virtual method.
+*/
+double QCPLayoutInset::selectTest(const QPointF &pos, bool onlySelectable, QVariant *details) const
+{
+  Q_UNUSED(details)
+  if (onlySelectable)
+    return -1;
+  
+  for (int i=0; i<mElements.size(); ++i)
+  {
+    // inset layout shall only return positive selectTest, if actually an inset object is at pos
+    // else it would block the entire underlying QCPAxisRect with its surface.
+    if (mElements.at(i)->selectTest(pos, onlySelectable) >= 0)
+      return mParentPlot->selectionTolerance()*0.99;
+  }
+  return -1;
 }
 
 /*!
@@ -8089,8 +8111,10 @@ QCP::Interaction QCPAbstractItem::selectionCategory() const
 
 
 
-/*! \mainpage %QCustomPlot Documentation
- 
+/*! \mainpage %QCustomPlot 1.0.0 Documentation
+
+  \image html qcp-doc-logo.png
+  
   Below is a brief overview of and guide to the classes and their relations. If you are new to
   QCustomPlot and just want to start using it, it's recommended to look at the tutorials and
   examples at
@@ -8099,17 +8123,13 @@ QCP::Interaction QCPAbstractItem::selectionCategory() const
  
   This documentation is especially helpful as a reference, when you're familiar with the basic
   concept of how to use %QCustomPlot and you wish to learn more about specific functionality.
- 
-  \section mainpage-simpleoverview Simplified Class Overview
-  
-  \image latex ClassesOverviewSimplified.png "" width=1.2\textwidth
-  \image html ClassesOverviewSimplified.png
-  <center>Simplified diagram of most important classes, view the \ref classoverview "Class Overview" to see a full overview.</center>
+  See the \ref classoverview "class overview" for diagrams explaining the relationships between
+  the most important classes of the QCustomPlot library.
   
   The central widget which displays the plottables and axes on its surface is QCustomPlot. Every
   QCustomPlot contains four axes by default. They can be accessed via the members xAxis, yAxis,
-  xAxis2 and yAxis2, and are of type QCPAxis. QCustomPlot supports an arbitrary number of axes and axis rects, see the
-  documentation of QCPAxisRect for details.
+  xAxis2 and yAxis2, and are of type QCPAxis. QCustomPlot supports an arbitrary number of axes and
+  axis rects, see the documentation of QCPAxisRect for details.
 
   \section mainpage-plottables Plottables
   
@@ -8268,7 +8288,13 @@ QCP::Interaction QCPAbstractItem::selectionCategory() const
 
 /*! \page classoverview Class Overview
   
-  \image html ClassesOverview.png "Overview of all classes and their relations"
+  The following diagrams may help to gain a deeper understanding of the relationships between classes that make up
+  the QCustomPlot library. The diagrams are not exhaustive, so only the classes deemed most relevant are shown.
+  
+  \section classoverview-relations Class Relationship Diagram
+  \image html RelationOverview.png "Overview of most important classes and their relations"
+  \section classoverview-inheritance Class Inheritance Tree
+  \image html InheritanceOverview.png "Inheritance tree of most important classes"
   
 */
 
@@ -9723,7 +9749,7 @@ QList<QCPAxisRect*> QCustomPlot::axisRects() const
   
   while (!elementStack.isEmpty())
   {
-    QList<QCPLayoutElement*> subElements = elementStack.pop()->elements();
+    QList<QCPLayoutElement*> subElements = elementStack.pop()->elements(false);
     for (int i=0; i<subElements.size(); ++i)
     {
       if (QCPLayoutElement *element = subElements.at(i))
@@ -9754,7 +9780,7 @@ QCPLayoutElement *QCustomPlot::layoutElementAt(const QPointF &pos) const
   while (searchSubElements && current)
   {
     searchSubElements = false;
-    const QList<QCPLayoutElement*> elements = current->elements();
+    const QList<QCPLayoutElement*> elements = current->elements(false);
     for (int i=0; i<elements.size(); ++i)
     {
       if (elements.at(i) && elements.at(i)->realVisibility() && elements.at(i)->selectTest(pos, false) >= 0)
@@ -9808,7 +9834,7 @@ QList<QCPLegend*> QCustomPlot::selectedLegends() const
   
   while (!elementStack.isEmpty())
   {
-    QList<QCPLayoutElement*> subElements = elementStack.pop()->elements();
+    QList<QCPLayoutElement*> subElements = elementStack.pop()->elements(false);
     for (int i=0; i<subElements.size(); ++i)
     {
       if (QCPLayoutElement *element = subElements.at(i))
