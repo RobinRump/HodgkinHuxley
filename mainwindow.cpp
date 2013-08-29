@@ -34,6 +34,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     this->setWindowTitle("HodgkinHuxley Simulator - Robin Rump");
 
+    // setup variables and sliders
     this->timer = new QTimer(this);
     this->config = new QFile(QDir::toNativeSeparators(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + "/com.robinrump.hodgkinhuxley.json"));
 
@@ -64,7 +65,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->gLSlider->setValue(this->gMaxL*10);
     ui->gLValue->setText(QString::number(this->gMaxL));
 
+    // prepare simulator
     this->init();
+
+    // init windows
     this->s = new Settings(this);
     this->w = new Welcome(this);
 
@@ -75,10 +79,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->plot->plotLayout()->addElement(0, 0, new QCPPlotTitle(ui->plot, "Hodgkin-Huxley"));
 
     // graphes
-    ui->plot->addGraph(ui->plot->xAxis, ui->plot->yAxis);
+    ui->plot->addGraph(ui->plot->xAxis, ui->plot->yAxis);  // V
     ui->plot->graph(0)->setData(this->time, this->V);    
 
-    ui->plot->addGraph(ui->plot->xAxis, ui->plot->yAxis);
+    ui->plot->addGraph(ui->plot->xAxis, ui->plot->yAxis);  // I
     ui->plot->graph(1)->setPen(QPen(QColor(255, 100, 0)));
     ui->plot->graph(1)->setData(this->time, this->I);
 
@@ -110,6 +114,7 @@ MainWindow::MainWindow(QWidget *parent) :
         this->toConfig(json);
     }
 
+    // connect ui elements with slots
     connect(ui->currentSlider, SIGNAL(valueChanged(int)), this, SLOT(updateCurrent()));
     connect(ui->gNaSlider, SIGNAL(valueChanged(int)), this, SLOT(updateGNa()));
     connect(ui->gKSlider, SIGNAL(valueChanged(int)), this, SLOT(updateGK()));
@@ -133,6 +138,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionJson, SIGNAL(triggered(bool)), this, SLOT(toJson()));
     connect(ui->actionWelcome, SIGNAL(triggered(bool)), this, SLOT(welcome()));
 
+    // connect and start timer
     connect(this->timer, SIGNAL(timeout()), this, SLOT(updatePlot()));
     this->timer->start(this->interval);
 }
@@ -144,22 +150,19 @@ MainWindow::~MainWindow()
 
 void MainWindow::init()
 {
+    // setup time variables
     this->j        = 1;
     this->time.resize(this->j);
     this->time[0]  = 0;
 
+    // init voltage
     this->V.resize(this->j); // mV
     this->V[0] = this->VRest;
+
+    // init gating variables
     this->n = this->alphaN(V[0])/(this->alphaN(V[0]) + this->betaN(V[0]));
     this->m = this->alphaM(V[0])/(this->alphaM(V[0]) + this->betaM(V[0]));
     this->h = this->alphaH(V[0])/(this->alphaH(V[0]) + this->betaH(V[0]));
-
-    this->I.resize(this->j); // mA
-    this->I[0] = 0;
-    this->cI = 0;
-    ui->currentSlider->setValue(this->cI);
-    ui->currentValue->setText(QString::number(this->cI));
-
     this->nh.resize(this->j);
     this->nh[0] = this->n;
     this->mh.resize(this->j);
@@ -167,10 +170,19 @@ void MainWindow::init()
     this->hh.resize(this->j);
     this->hh[0] = this->h;
 
+    // init current
+    this->I.resize(this->j); // mA
+    this->I[0] = 0;
+    this->cI = 0;
+    ui->currentSlider->setValue(this->cI);
+    ui->currentValue->setText(QString::number(this->cI));
+
     this->j++;
 }
 
-void MainWindow::updatePlot() {
+void MainWindow::updatePlot()
+{
+    // resize arrays
     this->time.resize(j+1);
     this->V.resize(j+1);
     this->I.resize(j+1);
@@ -178,12 +190,14 @@ void MainWindow::updatePlot() {
     this->mh.resize(j+1);
     this->hh.resize(j+1);
 
+    // check whether impulse has expired
     if (this->cMode == currentImpulse) {
         if (this->j > this->impulseStart + this->impulseDuration/this->dt) {
             changeCurrentMode(currentManual);
         }
     }
 
+    // calculate time and values
     this->time[j] = this->dt*j;
     this->I[j] = this->cI;
 
@@ -205,20 +219,20 @@ void MainWindow::updatePlot() {
                - this->gL  * (this->V[j-1] - this->EL)
                 ) / this->Cm * this->dt;
 
+    // replot
     ui->plot->graph(graphMembrane)->setData(this->time, this->V);
     ui->plot->graph(graphCurrent)->setData(this->time, this->I);
     if (this->isNShown) { ui->plot->graph(graphN)->setData(this->time, this->nh); }
     if (this->isMShown) { ui->plot->graph(graphM)->setData(this->time, this->mh); }
     if (this->isHShown) { ui->plot->graph(graphH)->setData(this->time, this->hh); }
-
     ui->plot->replot();
 
     this->j++;
-
     this->timer->start(this->interval);
 }
 
-QJsonObject MainWindow::fromConfig() {
+QJsonObject MainWindow::fromConfig()
+{
     QJsonDocument document;
     QByteArray bytes;
     if (!this->config->open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -230,7 +244,8 @@ QJsonObject MainWindow::fromConfig() {
     return document.object();
 }
 
-bool MainWindow::toConfig(QJsonObject j) {
+bool MainWindow::toConfig(QJsonObject j)
+{
     QJsonDocument document(j);
     QByteArray bytes = document.toJson();
     if (!this->config->open(QIODevice::WriteOnly | QIODevice::Text)) {
@@ -242,27 +257,32 @@ bool MainWindow::toConfig(QJsonObject j) {
 }
 
 
-void MainWindow::updateCurrent() {
+void MainWindow::updateCurrent()
+{
     this->cI = ui->currentSlider->value();
     ui->currentValue->setText(QString::number(this->cI));
 }
 
-void MainWindow::updateGNa() {
+void MainWindow::updateGNa()
+{
     this->gMaxNa = ui->gNaSlider->value();
     ui->gNaValue->setText(QString::number(this->gMaxNa));
 }
 
-void MainWindow::updateGK() {
+void MainWindow::updateGK()
+{
     this->gMaxK = ui->gKSlider->value();
     ui->gKValue->setText(QString::number(this->gMaxK));
 }
 
-void MainWindow::updateGL() {
+void MainWindow::updateGL()
+{
     this->gMaxL = ui->gLSlider->value() * 0.1;
     ui->gLValue->setText(QString::number(this->gMaxL));
 }
 
-void MainWindow::showN() {
+void MainWindow::showN()
+{
     if (ui->checkN->isChecked() == true) {
         this->isNShown = true;
         ui->plot->graph(graphN)->setData(this->time, this->nh);
@@ -273,7 +293,8 @@ void MainWindow::showN() {
     }
 }
 
-void MainWindow::showM() {
+void MainWindow::showM()
+{
     if (ui->checkM->isChecked() == true) {
         this->isMShown = true;
         ui->plot->graph(graphM)->setData(this->time, this->mh);
@@ -284,7 +305,8 @@ void MainWindow::showM() {
     }
 }
 
-void MainWindow::showH() {
+void MainWindow::showH()
+{
     if (ui->checkH->isChecked() == true) {
         this->isHShown = true;
         ui->plot->graph(graphH)->setData(this->time, this->hh);
@@ -295,7 +317,8 @@ void MainWindow::showH() {
     }
 }
 
-void MainWindow::changeCurrentMode(int m) {
+void MainWindow::changeCurrentMode(int m)
+{
     switch (m) {
         case currentManual:
             this->cMode = m;
@@ -322,7 +345,8 @@ void MainWindow::changeCurrentMode(int m) {
     }
 }
 
-void MainWindow::pause() {
+void MainWindow::pause()
+{
     if (this->isPaused == true) {
         this->isPaused = false;
         ui->pause->setText("||");
@@ -334,7 +358,8 @@ void MainWindow::pause() {
     }
 }
 
-void MainWindow::reset() {
+void MainWindow::reset()
+{
     this->changeCurrentMode(currentManual);
     ui->gNaSlider->setValue(120);
     ui->gKSlider->setValue(36);
@@ -345,7 +370,8 @@ void MainWindow::reset() {
     this->updateGL();
 }
 
-void MainWindow::clear() {
+void MainWindow::clear()
+{
     this->init();
 
     ui->plot->graph(0)->setData(this->time, this->V);
@@ -353,7 +379,8 @@ void MainWindow::clear() {
     ui->plot->replot();
 }
 
-void MainWindow::settings() {
+void MainWindow::settings()
+{
     if (this->isPaused == false) {
         this->pause();
     }
@@ -370,7 +397,8 @@ void MainWindow::settings() {
     this->s->show();
 }
 
-void MainWindow::updatePreferences() {
+void MainWindow::updatePreferences()
+{
     if (this->s->getMinCurrent() > this->s->getMaxCurrent() ||
         this->s->getMinGNa()     > this->s->getMaxGNa()     ||
         this->s->getMinGK()      > this->s->getMaxGK()      ||
@@ -397,19 +425,23 @@ void MainWindow::updatePreferences() {
     this->pause();
 }
 
-void MainWindow::about() {
+void MainWindow::about()
+{
     QMessageBox::about(this, "About HogdkinHuxley Simulator", "<b>HodgkinHuxley Simulator:</b><br>Copyright 2013 by Robin Rump<br><a href='http://www.qtcustomplot.com/'>http://www.robinrump.com/</a><br><br><b>QCustomPlot Library:</b><br>Copyright 2011, 2012, 2013 by<br>Emanuel Eichhammer<br><a href='http://www.qtcustomplot.com/'>http://www.qtcustomplot.com/</a><br><br>");
 }
 
-void MainWindow::welcome() {
+void MainWindow::welcome()
+{
     this->w->show();
 }
 
-int MainWindow::minCurrentValue() {
+int MainWindow::minCurrentValue()
+{
     return ui->currentSlider->minimum();
 }
 
-void MainWindow::toJson() {
+void MainWindow::toJson()
+{
     bool paused = true;
     if (this->isPaused == false) {
         this->pause();

@@ -33,6 +33,7 @@ Welcome::Welcome(QWidget *parent) :
     ui->setupUi(this);
     this->setWindowTitle("Welcome to HodgkinHuxley!");
 
+    // connect ui elements with slots
     connect(ui->closeButton, SIGNAL(clicked(bool)), this, SLOT(close()));
 }
 
