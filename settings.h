@@ -26,6 +26,8 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
+#include <QColor>
+#include <QColorDialog>
 #include <QDialog>
 
 namespace Ui {
