@@ -78,20 +78,34 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->plot->plotLayout()->insertRow(0);
     ui->plot->plotLayout()->addElement(0, 0, new QCPPlotTitle(ui->plot, "Hodgkin-Huxley"));
 
+    // legend
+    ui->plot->legend->setVisible(true);
+    QFont legendFont = this->font();
+    legendFont.setPointSize(9);
+    ui->plot->legend->setFont(legendFont);
+    ui->plot->legend->setBrush(QBrush(QColor(255,255,255,230)));
+    ui->plot->legend->setIconSize(QSize(10, 3));
+    ui->plot->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignBottom|Qt::AlignRight);
+
     // graphes
     ui->plot->addGraph(ui->plot->xAxis, ui->plot->yAxis);  // V
-    ui->plot->graph(0)->setData(this->time, this->V);    
+    ui->plot->graph(0)->setData(this->time, this->V);
+    ui->plot->graph(0)->setName("Membrane");
 
     ui->plot->addGraph(ui->plot->xAxis, ui->plot->yAxis);  // I
     ui->plot->graph(1)->setPen(QPen(QColor(255, 100, 0)));
     ui->plot->graph(1)->setData(this->time, this->I);
+    ui->plot->graph(1)->setName("Current");
 
     ui->plot->addGraph(ui->plot->xAxis, ui->plot->yAxis2); // n
     ui->plot->graph(2)->setPen(QPen(QColor(255, 0, 0)));
+    ui->plot->graph(2)->setName("n");
     ui->plot->addGraph(ui->plot->xAxis, ui->plot->yAxis2); // m
     ui->plot->graph(3)->setPen(QPen(QColor(0, 255, 0)));
+    ui->plot->graph(3)->setName("m");
     ui->plot->addGraph(ui->plot->xAxis, ui->plot->yAxis2); // h
-    ui->plot->graph(4)->setPen(QPen(QColor(0, 0, 255)));
+    ui->plot->graph(4)->setPen(QPen(QColor(60, 10, 80)));
+    ui->plot->graph(4)->setName("h");
 
     // axes configuration
     ui->plot->xAxis->setLabel("Time in ms");
