@@ -97,6 +97,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->plot->xAxis->setLabel("Time in ms");
     ui->plot->yAxis->setLabel("Membran potential in mV");
     ui->plot->yAxis2->setLabel("Gatting channels");
+    ui->plot->yAxis2->setVisible(true);
 
     // ranges
     ui->plot->xAxis->setRange(0, 100);
