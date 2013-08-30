@@ -81,7 +81,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // legend
     ui->plot->legend->setVisible(true);
     QFont legendFont = this->font();
-    legendFont.setPointSize(9);
+    legendFont.setPointSize(10);
     ui->plot->legend->setFont(legendFont);
     ui->plot->legend->setBrush(QBrush(QColor(255,255,255,230)));
     ui->plot->legend->setIconSize(QSize(10, 3));
@@ -399,8 +399,6 @@ void MainWindow::settings()
     if (this->isPaused == false) {
         this->pause();
     }
-    this->s->setTimeSteps(this->dt);
-    this->s->setPlottingIntervals(this->interval);
     this->s->setMinCurrent(ui->currentSlider->minimum());
     this->s->setMaxCurrent(ui->currentSlider->maximum());
     this->s->setMinGNa(ui->gNaSlider->minimum());
@@ -421,13 +419,6 @@ void MainWindow::updatePreferences()
         QMessageBox::warning(this, "Warning", "The minimum values must not be bigger than the maxiumum values!");
         this->pause();
         return;
-    }
-    if (this->dt != this->s->getTimeSteps() || this->interval != this->s->getPlottingIntervals()) {
-        QMessageBox::information(this, "Information", "Changing the time steps or the plotting intervals will force a clear of the current graph.");
-
-        this->dt = this->s->getTimeSteps();
-        this->interval = this->s->getPlottingIntervals();
-        this->clear();
     }
     ui->currentSlider->setMinimum(this->s->getMinCurrent());
     ui->currentSlider->setMaximum(this->s->getMaxCurrent());

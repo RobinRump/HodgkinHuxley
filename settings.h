@@ -51,8 +51,6 @@ public:
     int getMinGL();
     int getMaxGL();
 
-    void setTimeSteps(double v);
-    void setPlottingIntervals(int v);
     void setMinCurrent(int v);
     void setMaxCurrent(int v);
     void setMinGNa(int v);

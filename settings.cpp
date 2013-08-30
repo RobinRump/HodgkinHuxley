@@ -43,8 +43,6 @@ Settings::~Settings()
     delete ui;
 }
 
-double Settings::getTimeSteps() { return ui->timeStepValue->value(); }
-int Settings::getPlottingIntervals() { return ui->plottingIntervalsValue->value(); }
 int Settings::getMinCurrent() { return ui->minCurrentValue->value(); }
 int Settings::getMaxCurrent() { return ui->maxCurrentValue->value(); }
 int Settings::getMinGNa() { return ui->minGNaValue->value(); }
@@ -54,8 +52,6 @@ int Settings::getMaxGK() { return ui->maxGKValue->value(); }
 int Settings::getMinGL() { return ui->minGLValue->value(); }
 int Settings::getMaxGL() { return ui->maxGLValue->value(); }
 
-void Settings::setTimeSteps(double v) { ui->timeStepValue->setValue(v); }
-void Settings::setPlottingIntervals(int v) { ui->plottingIntervalsValue->setValue(v); }
 void Settings::setMinCurrent(int v) { ui->minCurrentValue->setValue(v); }
 void Settings::setMaxCurrent(int v) { ui->maxCurrentValue->setValue(v); }
 void Settings::setMinGNa(int v) { ui->minGNaValue->setValue(v); }
