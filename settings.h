@@ -31,6 +31,7 @@
 #include <QDebug>
 #include <QDialog>
 #include <QLineEdit>
+#include <QSignalMapper>
 #include <QToolButton>
 #include <QVector>
 
@@ -86,7 +87,7 @@ private:
     QVector<QLineEdit *> colors;
 
 private slots:
-    void changeColor();
+    void changeColor(int i);
 };
 
 #endif // SETTINGS_H

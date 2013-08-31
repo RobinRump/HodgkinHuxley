@@ -50,11 +50,15 @@ Settings::Settings(QWidget *parent) :
     // connect ui elements with slots
     connect(ui->buttonBox, SIGNAL(accepted()), this->parent(), SLOT(updatePreferences()));
     connect(ui->buttonBox, SIGNAL(rejected()), this->parent(), SLOT(pause()));
-    connect(ui->colorMembraneButton, SIGNAL(clicked(bool)), this, SLOT(changeColor()));
-    connect(ui->colorCurrentButton, SIGNAL(clicked(bool)), this, SLOT(changeColor()));
-    connect(ui->colorNButton, SIGNAL(clicked(bool)), this, SLOT(changeColor()));
-    connect(ui->colorMButton, SIGNAL(clicked(bool)), this, SLOT(changeColor()));
-    connect(ui->colorHButton, SIGNAL(clicked(bool)), this, SLOT(changeColor()));
+
+    QVector<QSignalMapper*> signalMapper;
+    signalMapper.resize(5);
+    for (int i = 0; i<5; i++) {
+        signalMapper[i] = new QSignalMapper(this);
+        connect(this->buttons[i], SIGNAL(clicked(bool)), signalMapper[i], SLOT(map()));
+        signalMapper[i]->setMapping(this->buttons[i], i);
+        connect(signalMapper[i], SIGNAL(mapped(int)), this, SLOT(changeColor(int)));
+    }
 }
 
 Settings::~Settings()
@@ -101,12 +105,11 @@ void Settings::setColors(QVector<QColor> colors)
     }
 }
 
-void Settings::changeColor() {
-    QToolButton *button = (QToolButton *) QWidget::sender();
+void Settings::changeColor(int i) {
     QColor color = QColorDialog::getColor();
-    button->setStyleSheet("background-color: " + this->toColorCode(color));
+    buttons[i]->setStyleSheet("background-color: " + this->toColorCode(color));
+    colors[i]->setText(this->toColorCode(color));
 }
-
 
 int Settings::getMinCurrent() { return ui->minCurrentValue->value(); }
 int Settings::getMaxCurrent() { return ui->maxCurrentValue->value(); }
