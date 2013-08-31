@@ -30,6 +30,9 @@
 #include <QColorDialog>
 #include <QDebug>
 #include <QDialog>
+#include <QLineEdit>
+#include <QToolButton>
+#include <QVector>
 
 namespace Ui {
 class Settings;
@@ -42,6 +45,14 @@ class Settings : public QDialog
 public:
     explicit Settings(QWidget *parent = 0);
     ~Settings();
+
+    enum Color {
+        colorMembrane = 0,
+        colorCurrent  = 1,
+        colorN        = 2,
+        colorM        = 3,
+        colorH        = 4
+    };
 
     QString toColorCode(QColor color);
     QColor fromColorCode(QString code);
@@ -70,6 +81,9 @@ public:
 
 private:
     Ui::Settings *ui;
+
+    QVector<QToolButton *> buttons;
+    QVector<QLineEdit *> colors;
 
 private slots:
     void changeColor();

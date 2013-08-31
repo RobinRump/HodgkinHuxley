@@ -33,6 +33,20 @@ Settings::Settings(QWidget *parent) :
     ui->setupUi(this);
     this->setWindowTitle("Preferences");
 
+    // define pointers
+    buttons.resize(5);
+    buttons[0] = ui->colorMembraneButton;
+    buttons[1] = ui->colorCurrentButton;
+    buttons[2] = ui->colorNButton;
+    buttons[3] = ui->colorMButton;
+    buttons[4] = ui->colorHButton;
+    colors.resize(5);
+    colors[0] = ui->colorMembraneValue;
+    colors[1] = ui->colorCurrentValue;
+    colors[2] = ui->colorNValue;
+    colors[3] = ui->colorMValue;
+    colors[4] = ui->colorHValue;
+
     // connect ui elements with slots
     connect(ui->buttonBox, SIGNAL(accepted()), this->parent(), SLOT(updatePreferences()));
     connect(ui->buttonBox, SIGNAL(rejected()), this->parent(), SLOT(pause()));
@@ -72,27 +86,19 @@ QColor Settings::fromColorCode(QString code)
 
 QVector<QColor> Settings::getColors() {
     QVector<QColor> colors(5);
-    colors[0] = this->fromColorCode(ui->colorMembraneValue->text());
-    colors[1] = this->fromColorCode(ui->colorCurrentValue->text());
-    colors[2] = this->fromColorCode(ui->colorNValue->text());
-    colors[3] = this->fromColorCode(ui->colorMValue->text());
-    colors[4] = this->fromColorCode(ui->colorHValue->text());
+    for (int i = 0; i<5; i++) {
+        colors[0] = this->fromColorCode(this->colors[i]->text());
+    }
 
     return colors;
 }
 
 void Settings::setColors(QVector<QColor> colors)
 {
-    ui->colorMembraneButton->setStyleSheet("background-color: " + this->toColorCode(colors[0]));
-    ui->colorMembraneValue->setText(this->toColorCode(colors[0]));
-    ui->colorCurrentButton->setStyleSheet("background-color: " + this->toColorCode(colors[1]));
-    ui->colorCurrentValue->setText(this->toColorCode(colors[1]));
-    ui->colorNButton->setStyleSheet("background-color: " + this->toColorCode(colors[2]));
-    ui->colorNValue->setText(this->toColorCode(colors[2]));
-    ui->colorMButton->setStyleSheet("background-color: " + this->toColorCode(colors[3]));
-    ui->colorMValue->setText(this->toColorCode(colors[3]));
-    ui->colorHButton->setStyleSheet("background-color: " + this->toColorCode(colors[4]));
-    ui->colorHValue->setText(this->toColorCode(colors[4]));
+    for (int i = 0; i<5; i++) {
+        this->buttons[i]->setStyleSheet("background-color: " + this->toColorCode(colors[i]));
+        this->colors[i]->setText(this->toColorCode(colors[i]));
+    }
 }
 
 void Settings::changeColor() {

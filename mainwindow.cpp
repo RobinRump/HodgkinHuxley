@@ -89,23 +89,23 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // graphes
     ui->plot->addGraph(ui->plot->xAxis, ui->plot->yAxis);  // V
-    ui->plot->graph(0)->setData(this->time, this->V);
-    ui->plot->graph(0)->setName("Membrane");
+    ui->plot->graph(graphMembrane)->setData(this->time, this->V);
+    ui->plot->graph(graphMembrane)->setName("Membrane");
 
     ui->plot->addGraph(ui->plot->xAxis, ui->plot->yAxis);  // I
-    ui->plot->graph(1)->setPen(QPen(QColor(255, 100, 0)));
-    ui->plot->graph(1)->setData(this->time, this->I);
-    ui->plot->graph(1)->setName("Current");
+    ui->plot->graph(graphCurrent)->setPen(QPen(QColor(255, 100, 0)));
+    ui->plot->graph(graphCurrent)->setData(this->time, this->I);
+    ui->plot->graph(graphCurrent)->setName("Current");
 
     ui->plot->addGraph(ui->plot->xAxis, ui->plot->yAxis2); // n
-    ui->plot->graph(2)->setPen(QPen(QColor(255, 0, 0)));
-    ui->plot->graph(2)->setName("n");
+    ui->plot->graph(graphN)->setPen(QPen(QColor(255, 0, 0)));
+    ui->plot->graph(graphN)->setName("n");
     ui->plot->addGraph(ui->plot->xAxis, ui->plot->yAxis2); // m
-    ui->plot->graph(3)->setPen(QPen(QColor(0, 255, 0)));
-    ui->plot->graph(3)->setName("m");
+    ui->plot->graph(graphM)->setPen(QPen(QColor(0, 255, 0)));
+    ui->plot->graph(graphM)->setName("m");
     ui->plot->addGraph(ui->plot->xAxis, ui->plot->yAxis2); // h
-    ui->plot->graph(4)->setPen(QPen(QColor(60, 10, 80)));
-    ui->plot->graph(4)->setName("h");
+    ui->plot->graph(graphH)->setPen(QPen(QColor(60, 10, 80)));
+    ui->plot->graph(graphH)->setName("h");
 
     // axes configuration
     ui->plot->xAxis->setLabel("Time in ms");
