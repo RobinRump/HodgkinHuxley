@@ -28,6 +28,7 @@
 
 #include <QColor>
 #include <QColorDialog>
+#include <QDebug>
 #include <QDialog>
 
 namespace Ui {
@@ -42,6 +43,9 @@ public:
     explicit Settings(QWidget *parent = 0);
     ~Settings();
 
+    QString toColorCode(QColor color);
+    QColor fromColorCode(QString code);
+
     double getTimeSteps();
     int getPlottingIntervals();
     int getMinCurrent();
@@ -52,6 +56,7 @@ public:
     int getMaxGK();
     int getMinGL();
     int getMaxGL();
+    QVector<QColor> getColors();
 
     void setMinCurrent(int v);
     void setMaxCurrent(int v);
@@ -61,12 +66,13 @@ public:
     void setMaxGK(int v);
     void setMinGL(int v);
     void setMaxGL(int v);
+    void setColors(QVector<QColor> colors);
 
 private:
     Ui::Settings *ui;
 
 private slots:
-
+    void changeColor();
 };
 
 #endif // SETTINGS_H

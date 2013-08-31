@@ -407,6 +407,13 @@ void MainWindow::settings()
     this->s->setMaxGK(ui->gKSlider->maximum());
     this->s->setMinGL(ui->gLSlider->minimum());
     this->s->setMaxGL(ui->gLSlider->maximum());
+    QVector<QColor> colors(5);
+    colors[0] = ui->plot->graph(0)->pen().color();
+    colors[1] = ui->plot->graph(1)->pen().color();
+    colors[2] = ui->plot->graph(2)->pen().color();
+    colors[3] = ui->plot->graph(3)->pen().color();
+    colors[4] = ui->plot->graph(4)->pen().color();
+    this->s->setColors(colors);
     this->s->show();
 }
 

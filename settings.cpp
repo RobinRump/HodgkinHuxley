@@ -36,12 +36,71 @@ Settings::Settings(QWidget *parent) :
     // connect ui elements with slots
     connect(ui->buttonBox, SIGNAL(accepted()), this->parent(), SLOT(updatePreferences()));
     connect(ui->buttonBox, SIGNAL(rejected()), this->parent(), SLOT(pause()));
+    connect(ui->colorMembraneButton, SIGNAL(clicked(bool)), this, SLOT(changeColor()));
+    connect(ui->colorCurrentButton, SIGNAL(clicked(bool)), this, SLOT(changeColor()));
+    connect(ui->colorNButton, SIGNAL(clicked(bool)), this, SLOT(changeColor()));
+    connect(ui->colorMButton, SIGNAL(clicked(bool)), this, SLOT(changeColor()));
+    connect(ui->colorHButton, SIGNAL(clicked(bool)), this, SLOT(changeColor()));
 }
 
 Settings::~Settings()
 {
     delete ui;
 }
+
+QString Settings::toColorCode(QColor color)
+{
+    QString r = QString::number(color.red(), 16);
+    QString g = QString::number(color.green(), 16);
+    QString b = QString::number(color.blue(), 16);
+    if (r.length() == 1) { r.prepend("0"); }
+    if (g.length() == 1) { g.prepend("0"); }
+    if (b.length() == 1) { b.prepend("0"); }
+
+    return "#" + r + g + b;
+}
+
+QColor Settings::fromColorCode(QString code)
+{
+    QString r = code.mid(1, 2);
+    QString g = code.mid(3, 2);
+    QString b = code.mid(5, 2);
+    bool ok;
+    return QColor(r.toInt(&ok, 16), g.toInt(&ok, 16), b.toInt(&ok, 16));
+
+}
+
+QVector<QColor> Settings::getColors() {
+    QVector<QColor> colors(5);
+    colors[0] = this->fromColorCode(ui->colorMembraneValue->text());
+    colors[1] = this->fromColorCode(ui->colorCurrentValue->text());
+    colors[2] = this->fromColorCode(ui->colorNValue->text());
+    colors[3] = this->fromColorCode(ui->colorMValue->text());
+    colors[4] = this->fromColorCode(ui->colorHValue->text());
+
+    return colors;
+}
+
+void Settings::setColors(QVector<QColor> colors)
+{
+    ui->colorMembraneButton->setStyleSheet("background-color: " + this->toColorCode(colors[0]));
+    ui->colorMembraneValue->setText(this->toColorCode(colors[0]));
+    ui->colorCurrentButton->setStyleSheet("background-color: " + this->toColorCode(colors[1]));
+    ui->colorCurrentValue->setText(this->toColorCode(colors[1]));
+    ui->colorNButton->setStyleSheet("background-color: " + this->toColorCode(colors[2]));
+    ui->colorNValue->setText(this->toColorCode(colors[2]));
+    ui->colorMButton->setStyleSheet("background-color: " + this->toColorCode(colors[3]));
+    ui->colorMValue->setText(this->toColorCode(colors[3]));
+    ui->colorHButton->setStyleSheet("background-color: " + this->toColorCode(colors[4]));
+    ui->colorHValue->setText(this->toColorCode(colors[4]));
+}
+
+void Settings::changeColor() {
+    QToolButton *button = (QToolButton *) QWidget::sender();
+    QColor color = QColorDialog::getColor();
+    button->setStyleSheet("background-color: " + this->toColorCode(color));
+}
+
 
 int Settings::getMinCurrent() { return ui->minCurrentValue->value(); }
 int Settings::getMaxCurrent() { return ui->maxCurrentValue->value(); }
