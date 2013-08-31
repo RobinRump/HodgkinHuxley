@@ -436,14 +436,14 @@
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>370</x>
+      <x>349</x>
       <y>560</y>
-      <width>410</width>
+      <width>431</width>
       <height>20</height>
      </rect>
     </property>
     <property name="text">
-     <string>HodgkinHuxley Simulator 1.0.1 - Copyright 2013 by Robin Rump</string>
+     <string>HodgkinHuxley Simulator 1.0.2 - Copyright 2013 by Robin Rump</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

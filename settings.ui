@@ -15,125 +15,19 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QTabWidget" name="tabWidget">
+    <widget class="QTabWidget" name="tabBox">
      <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="tab">
+     <widget class="QWidget" name="tabGeneral">
       <attribute name="title">
        <string>General</string>
       </attribute>
-      <widget class="QGroupBox" name="groupBoxGeneral">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>10</y>
-         <width>337</width>
-         <height>91</height>
-        </rect>
-       </property>
-       <property name="title">
-        <string>General</string>
-       </property>
-       <widget class="QDoubleSpinBox" name="timeStepValue">
-        <property name="geometry">
-         <rect>
-          <x>160</x>
-          <y>27</y>
-          <width>69</width>
-          <height>24</height>
-         </rect>
-        </property>
-        <property name="decimals">
-         <number>3</number>
-        </property>
-        <property name="minimum">
-         <double>0.001000000000000</double>
-        </property>
-        <property name="maximum">
-         <double>1.000000000000000</double>
-        </property>
-        <property name="singleStep">
-         <double>0.001000000000000</double>
-        </property>
-        <property name="value">
-         <double>0.025000000000000</double>
-        </property>
-       </widget>
-       <widget class="QLabel" name="timeStepLabel">
-        <property name="geometry">
-         <rect>
-          <x>30</x>
-          <y>29</y>
-          <width>121</width>
-          <height>21</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Time steps:</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="timeStepUnit">
-        <property name="geometry">
-         <rect>
-          <x>240</x>
-          <y>30</y>
-          <width>30</width>
-          <height>20</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>ms</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="plottingIntervalsUnit">
-        <property name="geometry">
-         <rect>
-          <x>240</x>
-          <y>60</y>
-          <width>30</width>
-          <height>20</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>ms</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="plottingIntervalsLabel">
-        <property name="geometry">
-         <rect>
-          <x>30</x>
-          <y>59</y>
-          <width>121</width>
-          <height>21</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Plotting intervals:</string>
-        </property>
-       </widget>
-       <widget class="QSpinBox" name="plottingIntervalsValue">
-        <property name="geometry">
-         <rect>
-          <x>160</x>
-          <y>57</y>
-          <width>57</width>
-          <height>24</height>
-         </rect>
-        </property>
-        <property name="minimum">
-         <number>1</number>
-        </property>
-        <property name="maximum">
-         <number>1000</number>
-        </property>
-       </widget>
-      </widget>
       <widget class="QGroupBox" name="groupBoxGeneral_2">
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>110</y>
+         <y>10</y>
          <width>337</width>
          <height>191</height>
         </rect>
@@ -525,6 +419,207 @@ Emanuel Eichhammer&lt;br&gt;
         </property>
         <property name="text">
          <string>mS/cm2</string>
+        </property>
+       </widget>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="tabAppearances">
+      <attribute name="title">
+       <string>Appearances</string>
+      </attribute>
+      <widget class="QGroupBox" name="groupBoxAppearances">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>10</y>
+         <width>337</width>
+         <height>181</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>Colors</string>
+       </property>
+       <widget class="QLabel" name="colorCurrentLabel">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>59</y>
+          <width>121</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Color current:</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="colorMembraneLabel">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>29</y>
+          <width>121</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Color membrane:</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="colorNLabel">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>90</y>
+          <width>121</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Color n:</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="colorMLabel">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>120</y>
+          <width>121</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Color m:</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="colorHLabel">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>152</y>
+          <width>121</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Color h:</string>
+        </property>
+       </widget>
+       <widget class="QToolButton" name="colorMembraneButton">
+        <property name="geometry">
+         <rect>
+          <x>290</x>
+          <y>29</y>
+          <width>27</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
+        <property name="text">
+         <string>...</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="colorMembraneValue">
+        <property name="geometry">
+         <rect>
+          <x>160</x>
+          <y>29</y>
+          <width>113</width>
+          <height>21</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QToolButton" name="colorCurrentButton">
+        <property name="geometry">
+         <rect>
+          <x>290</x>
+          <y>60</y>
+          <width>27</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>...</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="colorCurrentValue">
+        <property name="geometry">
+         <rect>
+          <x>160</x>
+          <y>60</y>
+          <width>113</width>
+          <height>21</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QToolButton" name="colorNButton">
+        <property name="geometry">
+         <rect>
+          <x>290</x>
+          <y>90</y>
+          <width>27</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>...</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="colorNValue">
+        <property name="geometry">
+         <rect>
+          <x>160</x>
+          <y>90</y>
+          <width>113</width>
+          <height>21</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QToolButton" name="colorMButton">
+        <property name="geometry">
+         <rect>
+          <x>290</x>
+          <y>120</y>
+          <width>27</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>...</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="colorMValue">
+        <property name="geometry">
+         <rect>
+          <x>160</x>
+          <y>120</y>
+          <width>113</width>
+          <height>21</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QToolButton" name="colorHButton">
+        <property name="geometry">
+         <rect>
+          <x>290</x>
+          <y>150</y>
+          <width>27</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>...</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="colorHValue">
+        <property name="geometry">
+         <rect>
+          <x>160</x>
+          <y>150</y>
+          <width>113</width>
+          <height>21</height>
+         </rect>
         </property>
        </widget>
       </widget>

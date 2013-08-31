@@ -76,27 +76,42 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->plot->setInteraction(QCP::iRangeDrag, true);
     ui->plot->setInteraction(QCP::iRangeZoom, true);
     ui->plot->plotLayout()->insertRow(0);
-    ui->plot->plotLayout()->addElement(0, 0, new QCPPlotTitle(ui->plot, "Hodgkin-Huxley"));
+    ui->plot->plotLayout()->addElement(0, 0, new QCPPlotTitle(ui->plot, "HodgkinHuxley"));
+
+    // legend
+    ui->plot->legend->setVisible(true);
+    QFont legendFont = this->font();
+    legendFont.setPointSize(10);
+    ui->plot->legend->setFont(legendFont);
+    ui->plot->legend->setBrush(QBrush(QColor(255,255,255,230)));
+    ui->plot->legend->setIconSize(QSize(10, 3));
+    ui->plot->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignBottom|Qt::AlignRight);
 
     // graphes
     ui->plot->addGraph(ui->plot->xAxis, ui->plot->yAxis);  // V
-    ui->plot->graph(0)->setData(this->time, this->V);    
+    ui->plot->graph(graphMembrane)->setData(this->time, this->V);
+    ui->plot->graph(graphMembrane)->setName("Membrane");
 
     ui->plot->addGraph(ui->plot->xAxis, ui->plot->yAxis);  // I
-    ui->plot->graph(1)->setPen(QPen(QColor(255, 100, 0)));
-    ui->plot->graph(1)->setData(this->time, this->I);
+    ui->plot->graph(graphCurrent)->setPen(QPen(QColor(255, 100, 0)));
+    ui->plot->graph(graphCurrent)->setData(this->time, this->I);
+    ui->plot->graph(graphCurrent)->setName("Current");
 
     ui->plot->addGraph(ui->plot->xAxis, ui->plot->yAxis2); // n
-    ui->plot->graph(2)->setPen(QPen(QColor(255, 0, 0)));
+    ui->plot->graph(graphN)->setPen(QPen(QColor(255, 0, 0)));
+    ui->plot->graph(graphN)->setName("n");
     ui->plot->addGraph(ui->plot->xAxis, ui->plot->yAxis2); // m
-    ui->plot->graph(3)->setPen(QPen(QColor(0, 255, 0)));
+    ui->plot->graph(graphM)->setPen(QPen(QColor(0, 255, 0)));
+    ui->plot->graph(graphM)->setName("m");
     ui->plot->addGraph(ui->plot->xAxis, ui->plot->yAxis2); // h
-    ui->plot->graph(4)->setPen(QPen(QColor(0, 0, 255)));
+    ui->plot->graph(graphH)->setPen(QPen(QColor(60, 10, 80)));
+    ui->plot->graph(graphH)->setName("h");
 
     // axes configuration
     ui->plot->xAxis->setLabel("Time in ms");
     ui->plot->yAxis->setLabel("Membran potential in mV");
     ui->plot->yAxis2->setLabel("Gatting channels");
+    ui->plot->yAxis2->setVisible(true);
 
     // ranges
     ui->plot->xAxis->setRange(0, 100);
@@ -109,8 +124,8 @@ MainWindow::MainWindow(QWidget *parent) :
     if (this->config->exists()) {
         json = this->fromConfig();
     } else {
+        json.insert("version", 102);
         json.insert("startup", true);
-        json.insert("version", 101);
         this->toConfig(json);
     }
 
@@ -384,8 +399,6 @@ void MainWindow::settings()
     if (this->isPaused == false) {
         this->pause();
     }
-    this->s->setTimeSteps(this->dt);
-    this->s->setPlottingIntervals(this->interval);
     this->s->setMinCurrent(ui->currentSlider->minimum());
     this->s->setMaxCurrent(ui->currentSlider->maximum());
     this->s->setMinGNa(ui->gNaSlider->minimum());
@@ -394,6 +407,13 @@ void MainWindow::settings()
     this->s->setMaxGK(ui->gKSlider->maximum());
     this->s->setMinGL(ui->gLSlider->minimum());
     this->s->setMaxGL(ui->gLSlider->maximum());
+    QVector<QColor> colors(5);
+    colors[0] = ui->plot->graph(0)->pen().color();
+    colors[1] = ui->plot->graph(1)->pen().color();
+    colors[2] = ui->plot->graph(2)->pen().color();
+    colors[3] = ui->plot->graph(3)->pen().color();
+    colors[4] = ui->plot->graph(4)->pen().color();
+    this->s->setColors(colors);
     this->s->show();
 }
 
@@ -407,13 +427,6 @@ void MainWindow::updatePreferences()
         this->pause();
         return;
     }
-    if (this->dt != this->s->getTimeSteps() || this->interval != this->s->getPlottingIntervals()) {
-        QMessageBox::information(this, "Information", "Changing the time steps or the plotting intervals will force a clear of the current graph.");
-
-        this->dt = this->s->getTimeSteps();
-        this->interval = this->s->getPlottingIntervals();
-        this->clear();
-    }
     ui->currentSlider->setMinimum(this->s->getMinCurrent());
     ui->currentSlider->setMaximum(this->s->getMaxCurrent());
     ui->gNaSlider->setMinimum(this->s->getMinGNa());
@@ -422,6 +435,10 @@ void MainWindow::updatePreferences()
     ui->gKSlider->setMaximum(this->s->getMaxGK());
     ui->gLSlider->setMinimum(this->s->getMinGL());
     ui->gLSlider->setMaximum(this->s->getMaxGL());
+    QVector<QColor> colors = this->s->getColors();
+    for (int i = 0; i<5; i++) {
+        ui->plot->graph(i)->setPen(QPen(colors[i]));
+    }
     this->pause();
 }
 

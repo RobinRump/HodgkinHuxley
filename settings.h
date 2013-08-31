@@ -26,7 +26,14 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
+#include <QColor>
+#include <QColorDialog>
+#include <QDebug>
 #include <QDialog>
+#include <QLineEdit>
+#include <QSignalMapper>
+#include <QToolButton>
+#include <QVector>
 
 namespace Ui {
 class Settings;
@@ -40,6 +47,17 @@ public:
     explicit Settings(QWidget *parent = 0);
     ~Settings();
 
+    enum Color {
+        colorMembrane = 0,
+        colorCurrent  = 1,
+        colorN        = 2,
+        colorM        = 3,
+        colorH        = 4
+    };
+
+    QString toColorCode(QColor color);
+    QColor fromColorCode(QString code);
+
     double getTimeSteps();
     int getPlottingIntervals();
     int getMinCurrent();
@@ -50,9 +68,8 @@ public:
     int getMaxGK();
     int getMinGL();
     int getMaxGL();
+    QVector<QColor> getColors();
 
-    void setTimeSteps(double v);
-    void setPlottingIntervals(int v);
     void setMinCurrent(int v);
     void setMaxCurrent(int v);
     void setMinGNa(int v);
@@ -61,12 +78,16 @@ public:
     void setMaxGK(int v);
     void setMinGL(int v);
     void setMaxGL(int v);
+    void setColors(QVector<QColor> colors);
 
 private:
     Ui::Settings *ui;
 
-private slots:
+    QVector<QToolButton *> colorButtons;
+    QVector<QLineEdit *> colorValues;
 
+private slots:
+    void changeColor(int i);
 };
 
 #endif // SETTINGS_H
