@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="tabBox">
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tabGeneral">
       <attribute name="title">
@@ -425,7 +425,7 @@ Emanuel Eichhammer&lt;br&gt;
      </widget>
      <widget class="QWidget" name="tabAppearances">
       <attribute name="title">
-       <string>Seite</string>
+       <string>Appearances</string>
       </attribute>
       <widget class="QGroupBox" name="groupBoxAppearances">
        <property name="geometry">

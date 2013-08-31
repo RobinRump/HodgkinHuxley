@@ -83,8 +83,8 @@ public:
 private:
     Ui::Settings *ui;
 
-    QVector<QToolButton *> buttons;
-    QVector<QLineEdit *> colors;
+    QVector<QToolButton *> colorButtons;
+    QVector<QLineEdit *> colorValues;
 
 private slots:
     void changeColor(int i);

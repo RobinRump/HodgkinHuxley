@@ -124,8 +124,8 @@ MainWindow::MainWindow(QWidget *parent) :
     if (this->config->exists()) {
         json = this->fromConfig();
     } else {
+        json.insert("version", 102);
         json.insert("startup", true);
-        json.insert("version", 101);
         this->toConfig(json);
     }
 
@@ -435,6 +435,10 @@ void MainWindow::updatePreferences()
     ui->gKSlider->setMaximum(this->s->getMaxGK());
     ui->gLSlider->setMinimum(this->s->getMinGL());
     ui->gLSlider->setMaximum(this->s->getMaxGL());
+    QVector<QColor> colors = this->s->getColors();
+    for (int i = 0; i<5; i++) {
+        ui->plot->graph(i)->setPen(QPen(colors[i]));
+    }
     this->pause();
 }
 

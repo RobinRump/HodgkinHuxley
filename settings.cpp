@@ -34,18 +34,18 @@ Settings::Settings(QWidget *parent) :
     this->setWindowTitle("Preferences");
 
     // define pointers
-    buttons.resize(5);
-    buttons[0] = ui->colorMembraneButton;
-    buttons[1] = ui->colorCurrentButton;
-    buttons[2] = ui->colorNButton;
-    buttons[3] = ui->colorMButton;
-    buttons[4] = ui->colorHButton;
-    colors.resize(5);
-    colors[0] = ui->colorMembraneValue;
-    colors[1] = ui->colorCurrentValue;
-    colors[2] = ui->colorNValue;
-    colors[3] = ui->colorMValue;
-    colors[4] = ui->colorHValue;
+    this->colorButtons.resize(5);
+    this->colorButtons[0] = ui->colorMembraneButton;
+    this->colorButtons[1] = ui->colorCurrentButton;
+    this->colorButtons[2] = ui->colorNButton;
+    this->colorButtons[3] = ui->colorMButton;
+    this->colorButtons[4] = ui->colorHButton;
+    this->colorValues.resize(5);
+    this->colorValues[0] = ui->colorMembraneValue;
+    this->colorValues[1] = ui->colorCurrentValue;
+    this->colorValues[2] = ui->colorNValue;
+    this->colorValues[3] = ui->colorMValue;
+    this->colorValues[4] = ui->colorHValue;
 
     // connect ui elements with slots
     connect(ui->buttonBox, SIGNAL(accepted()), this->parent(), SLOT(updatePreferences()));
@@ -55,8 +55,8 @@ Settings::Settings(QWidget *parent) :
     signalMapper.resize(5);
     for (int i = 0; i<5; i++) {
         signalMapper[i] = new QSignalMapper(this);
-        connect(this->buttons[i], SIGNAL(clicked(bool)), signalMapper[i], SLOT(map()));
-        signalMapper[i]->setMapping(this->buttons[i], i);
+        connect(this->colorButtons[i], SIGNAL(clicked(bool)), signalMapper[i], SLOT(map()));
+        signalMapper[i]->setMapping(this->colorButtons[i], i);
         connect(signalMapper[i], SIGNAL(mapped(int)), this, SLOT(changeColor(int)));
     }
 }
@@ -91,7 +91,7 @@ QColor Settings::fromColorCode(QString code)
 QVector<QColor> Settings::getColors() {
     QVector<QColor> colors(5);
     for (int i = 0; i<5; i++) {
-        colors[0] = this->fromColorCode(this->colors[i]->text());
+        colors[i] = this->fromColorCode(this->colorValues[i]->text());
     }
 
     return colors;
@@ -100,15 +100,15 @@ QVector<QColor> Settings::getColors() {
 void Settings::setColors(QVector<QColor> colors)
 {
     for (int i = 0; i<5; i++) {
-        this->buttons[i]->setStyleSheet("background-color: " + this->toColorCode(colors[i]));
-        this->colors[i]->setText(this->toColorCode(colors[i]));
+        this->colorButtons[i]->setStyleSheet("background-color: " + this->toColorCode(colors[i]));
+        this->colorValues[i]->setText(this->toColorCode(colors[i]));
     }
 }
 
 void Settings::changeColor(int i) {
     QColor color = QColorDialog::getColor();
-    buttons[i]->setStyleSheet("background-color: " + this->toColorCode(color));
-    colors[i]->setText(this->toColorCode(color));
+    colorButtons[i]->setStyleSheet("background-color: " + this->toColorCode(color));
+    colorValues[i]->setText(this->toColorCode(color));
 }
 
 int Settings::getMinCurrent() { return ui->minCurrentValue->value(); }
