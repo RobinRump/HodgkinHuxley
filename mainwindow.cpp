@@ -76,7 +76,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->plot->setInteraction(QCP::iRangeDrag, true);
     ui->plot->setInteraction(QCP::iRangeZoom, true);
     ui->plot->plotLayout()->insertRow(0);
-    ui->plot->plotLayout()->addElement(0, 0, new QCPPlotTitle(ui->plot, "Hodgkin-Huxley"));
+    ui->plot->plotLayout()->addElement(0, 0, new QCPPlotTitle(ui->plot, "HodgkinHuxley"));
 
     // legend
     ui->plot->legend->setVisible(true);
