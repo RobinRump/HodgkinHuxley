@@ -566,7 +566,7 @@
     <string>Json</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+S</string>
+    <string>Ctrl+J</string>
    </property>
   </action>
   <action name="actionWelcome">
@@ -577,6 +577,9 @@
   <action name="actionXml">
    <property name="text">
     <string>Xml</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+X</string>
    </property>
   </action>
  </widget>

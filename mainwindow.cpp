@@ -506,7 +506,7 @@ void MainWindow::toXml()
         paused = false;
     }
 
-    QFile file(QFileDialog::getSaveFileName(this, "Select Directory", QDir::toNativeSeparators(QDir::currentPath() + "/HH_" + QDateTime().currentDateTime().toString("yyyy_MM_dd_hh_mm")), "*.json"));
+    QFile file(QFileDialog::getSaveFileName(this, "Select Directory", QDir::toNativeSeparators(QDir::currentPath() + "/HH_" + QDateTime().currentDateTime().toString("yyyy_MM_dd_hh_mm")), "*.xml"));
     file.open(QIODevice::WriteOnly | QIODevice::Text);
     QXmlStreamWriter stream(&file);
 
@@ -523,7 +523,10 @@ void MainWindow::toXml()
     foreach (QString section, sections) {
         stream.writeStartElement(section);
         for (int i = 0; i < this->time.size(); i++) {
-            stream.writeAttribute(QString::number(this->time[i]), QString::number(this->values[j][i]));
+            //stream.writeTextElement(QString::number(this->time[i]), QString::number(this->values[j]->at(i)));
+            stream.writeEmptyElement("value");
+            stream.writeAttribute("time", QString::number(this->time[i]));
+            stream.writeAttribute(section, QString::number(this->values[j]->at(i)));
         }
         stream.writeEndElement();
         j++;
