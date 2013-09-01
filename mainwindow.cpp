@@ -159,6 +159,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionSettings, SIGNAL(triggered(bool)), this, SLOT(settings()));
     connect(ui->actionAbout, SIGNAL(triggered(bool)), this, SLOT(about()));
     connect(ui->actionJson, SIGNAL(triggered(bool)), this, SLOT(toJson()));
+    connect(ui->actionXml, SIGNAL(triggered(bool)), this, SLOT(toXml()));
     connect(ui->actionWelcome, SIGNAL(triggered(bool)), this, SLOT(welcome()));
 
     // connect and start timer
@@ -505,7 +506,9 @@ void MainWindow::toXml()
         paused = false;
     }
 
-    QXmlStreamWriter stream(&output);
+    QFile file(QFileDialog::getSaveFileName(this, "Select Directory", QDir::toNativeSeparators(QDir::currentPath() + "/HH_" + QDateTime().currentDateTime().toString("yyyy_MM_dd_hh_mm")), "*.json"));
+    file.open(QIODevice::WriteOnly | QIODevice::Text);
+    QXmlStreamWriter stream(&file);
 
     stream.setAutoFormatting(true);
     stream.writeStartDocument();
@@ -517,17 +520,17 @@ void MainWindow::toXml()
     sections.append("m");
     sections.append("h");
     int j = 0;
-    foreach (QString &section, sections) {
+    foreach (QString section, sections) {
         stream.writeStartElement(section);
         for (int i = 0; i < this->time.size(); i++) {
-            stream.writeAttribute(QString::number(this->time[i]), this->values[j][i]);
+            stream.writeAttribute(QString::number(this->time[i]), QString::number(this->values[j][i]));
         }
         stream.writeEndElement();
         j++;
     }
-
-
     stream.writeEndDocument();
+
+    file.close();
 
     if (paused == false) {
         this->pause();
