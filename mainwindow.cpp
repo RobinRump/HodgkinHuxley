@@ -72,6 +72,14 @@ MainWindow::MainWindow(QWidget *parent) :
     this->s = new Settings(this);
     this->w = new Welcome(this);
 
+    // define the pointers
+    this->values.resize(5);
+    this->values[0] = &this->V;
+    this->values[1] = &this->I;
+    this->values[2] = &this->nh;
+    this->values[3] = &this->mh;
+    this->values[4] = &this->hh;
+
     // plot config
     ui->plot->setInteraction(QCP::iRangeDrag, true);
     ui->plot->setInteraction(QCP::iRangeZoom, true);
@@ -270,7 +278,6 @@ bool MainWindow::toConfig(QJsonObject j)
     this->config->close();
     return true;
 }
-
 
 void MainWindow::updateCurrent()
 {
@@ -485,6 +492,43 @@ void MainWindow::toJson()
     file.open(QIODevice::WriteOnly | QIODevice::Text);
     file.write(bytes);
     file.close();
+    if (paused == false) {
+        this->pause();
+    }
+}
+
+void MainWindow::toXml()
+{
+    bool paused = true;
+    if (this->isPaused == false) {
+        this->pause();
+        paused = false;
+    }
+
+    QXmlStreamWriter stream(&output);
+
+    stream.setAutoFormatting(true);
+    stream.writeStartDocument();
+
+    QList<QString> sections;
+    sections.append("voltage");
+    sections.append("current");
+    sections.append("n");
+    sections.append("m");
+    sections.append("h");
+    int j = 0;
+    foreach (QString &section, sections) {
+        stream.writeStartElement(section);
+        for (int i = 0; i < this->time.size(); i++) {
+            stream.writeAttribute(QString::number(this->time[i]), this->values[j][i]);
+        }
+        stream.writeEndElement();
+        j++;
+    }
+
+
+    stream.writeEndDocument();
+
     if (paused == false) {
         this->pause();
     }

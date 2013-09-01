@@ -46,7 +46,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>190</y>
+     <y>200</y>
      <width>121</width>
      <height>151</height>
     </rect>
@@ -59,8 +59,8 @@ background-repeat: no-repeat;</string>
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>170</x>
-     <y>230</y>
+     <x>160</x>
+     <y>240</y>
      <width>261</width>
      <height>51</height>
     </rect>
