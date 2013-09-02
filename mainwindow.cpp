@@ -161,6 +161,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionJson, SIGNAL(triggered(bool)), this, SLOT(toJson()));
     connect(ui->actionXml, SIGNAL(triggered(bool)), this, SLOT(toXml()));
     connect(ui->actionWelcome, SIGNAL(triggered(bool)), this, SLOT(welcome()));
+    connect(ui->actionReset, SIGNAL(triggered(bool)), this, SLOT(reset()));
+    connect(ui->actionClear, SIGNAL(triggered(bool)), this, SLOT(clear()));
 
     // connect and start timer
     connect(this->timer, SIGNAL(timeout()), this, SLOT(updatePlot()));
