@@ -370,6 +370,10 @@ void MainWindow::changeCurrentMode(int m)
     }
 }
 
+void MainWindow::focusOutEvent(QFocusEvent* event) {
+    this->pause();
+}
+
 void MainWindow::pause()
 {
     if (this->isPaused == true) {

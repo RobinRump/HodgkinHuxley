@@ -109,6 +109,8 @@ private:
     double alphaM(double v); double betaM(double v);
     double alphaH(double v); double betaH(double v);
 
+    void focusOutEvent(QFocusEvent* event);
+
 public slots:
     void updatePreferences();
     int minCurrentValue();
