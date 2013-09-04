@@ -79,6 +79,9 @@ public:
     QJsonObject fromConfig();
     bool toConfig(QJsonObject j);
 
+    void focusOutEvent(QFocusEvent* event);
+    void resizeEvent(QResizeEvent* event);
+
 private:
     Ui::MainWindow *ui;
 
@@ -108,8 +111,6 @@ private:
     double alphaN(double v); double betaN(double v);
     double alphaM(double v); double betaM(double v);
     double alphaH(double v); double betaH(double v);
-
-    void focusOutEvent(QFocusEvent* event);
 
 public slots:
     void updatePreferences();

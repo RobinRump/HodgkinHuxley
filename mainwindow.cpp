@@ -33,6 +33,8 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     this->setWindowTitle("HodgkinHuxley Simulator - Robin Rump");
+    this->setMinimumWidth(800);
+    this->setMaximumHeight(630);
 
     // setup variables and sliders
     this->timer = new QTimer(this);
@@ -372,6 +374,11 @@ void MainWindow::changeCurrentMode(int m)
 
 void MainWindow::focusOutEvent(QFocusEvent* event) {
     this->pause();
+}
+
+void MainWindow::resizeEvent(QResizeEvent* event) {
+
+
 }
 
 void MainWindow::pause()
