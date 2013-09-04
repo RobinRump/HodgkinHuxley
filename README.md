@@ -1,4 +1,4 @@
-HodgkinHuxley 1.0.2
+HodgkinHuxley 1.0.3
 =============
 A simulator of Hodgkin &amp; Huxley's neuron model.
 
@@ -7,7 +7,7 @@ Features
 - Dynamically inject a current and watch the reaction of the membrane potential.
 - Dynamically change the conductivities of the membrane.
 - Watch the change of the gating variables n, m, h.
-- Export data to JSON.
+- Export data to JSON and XML.
 - Written in C++ and Qt.
 
 Copyright

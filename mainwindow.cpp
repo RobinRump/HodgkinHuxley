@@ -72,6 +72,14 @@ MainWindow::MainWindow(QWidget *parent) :
     this->s = new Settings(this);
     this->w = new Welcome(this);
 
+    // define the pointers
+    this->values.resize(5);
+    this->values[0] = &this->V;
+    this->values[1] = &this->I;
+    this->values[2] = &this->nh;
+    this->values[3] = &this->mh;
+    this->values[4] = &this->hh;
+
     // plot config
     ui->plot->setInteraction(QCP::iRangeDrag, true);
     ui->plot->setInteraction(QCP::iRangeZoom, true);
@@ -124,7 +132,7 @@ MainWindow::MainWindow(QWidget *parent) :
     if (this->config->exists()) {
         json = this->fromConfig();
     } else {
-        json.insert("version", 102);
+        json.insert("version", 103);
         json.insert("startup", true);
         this->toConfig(json);
     }
@@ -151,7 +159,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionSettings, SIGNAL(triggered(bool)), this, SLOT(settings()));
     connect(ui->actionAbout, SIGNAL(triggered(bool)), this, SLOT(about()));
     connect(ui->actionJson, SIGNAL(triggered(bool)), this, SLOT(toJson()));
+    connect(ui->actionXml, SIGNAL(triggered(bool)), this, SLOT(toXml()));
     connect(ui->actionWelcome, SIGNAL(triggered(bool)), this, SLOT(welcome()));
+    connect(ui->actionReset, SIGNAL(triggered(bool)), this, SLOT(reset()));
+    connect(ui->actionClear, SIGNAL(triggered(bool)), this, SLOT(clear()));
 
     // connect and start timer
     connect(this->timer, SIGNAL(timeout()), this, SLOT(updatePlot()));
@@ -271,7 +282,6 @@ bool MainWindow::toConfig(QJsonObject j)
     return true;
 }
 
-
 void MainWindow::updateCurrent()
 {
     this->cI = ui->currentSlider->value();
@@ -358,6 +368,10 @@ void MainWindow::changeCurrentMode(int m)
             ui->impulseMagnitude->setEnabled(false);
         break;
     }
+}
+
+void MainWindow::focusOutEvent(QFocusEvent* event) {
+    this->pause();
 }
 
 void MainWindow::pause()
@@ -485,6 +499,48 @@ void MainWindow::toJson()
     file.open(QIODevice::WriteOnly | QIODevice::Text);
     file.write(bytes);
     file.close();
+    if (paused == false) {
+        this->pause();
+    }
+}
+
+void MainWindow::toXml()
+{
+    bool paused = true;
+    if (this->isPaused == false) {
+        this->pause();
+        paused = false;
+    }
+
+    QFile file(QFileDialog::getSaveFileName(this, "Select Directory", QDir::toNativeSeparators(QDir::currentPath() + "/HH_" + QDateTime().currentDateTime().toString("yyyy_MM_dd_hh_mm")), "*.xml"));
+    file.open(QIODevice::WriteOnly | QIODevice::Text);
+    QXmlStreamWriter stream(&file);
+
+    stream.setAutoFormatting(true);
+    stream.writeStartDocument();
+
+    QList<QString> sections;
+    sections.append("voltage");
+    sections.append("current");
+    sections.append("n");
+    sections.append("m");
+    sections.append("h");
+    int j = 0;
+    foreach (QString section, sections) {
+        stream.writeStartElement(section);
+        for (int i = 0; i < this->time.size(); i++) {
+            //stream.writeTextElement(QString::number(this->time[i]), QString::number(this->values[j]->at(i)));
+            stream.writeEmptyElement("value");
+            stream.writeAttribute("time", QString::number(this->time[i]));
+            stream.writeAttribute(section, QString::number(this->values[j]->at(i)));
+        }
+        stream.writeEndElement();
+        j++;
+    }
+    stream.writeEndDocument();
+
+    file.close();
+
     if (paused == false) {
         this->pause();
     }

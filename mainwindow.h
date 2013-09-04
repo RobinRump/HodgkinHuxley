@@ -38,6 +38,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonValue>
+#include <QList>
 #include <QMainWindow>
 #include <QMessageBox>
 #include <QSignalMapper>
@@ -45,6 +46,7 @@
 #include <QTime>
 #include <QTimer>
 #include <QVector>
+#include <QXmlStreamWriter>
 
 namespace Ui {
 class MainWindow;
@@ -101,9 +103,13 @@ private:
 
     QFile *config;
 
+    QVector<QVector <double> *> values;
+
     double alphaN(double v); double betaN(double v);
     double alphaM(double v); double betaM(double v);
     double alphaH(double v); double betaH(double v);
+
+    void focusOutEvent(QFocusEvent* event);
 
 public slots:
     void updatePreferences();
@@ -130,6 +136,7 @@ private slots:
     void welcome();
 
     void toJson();
+    void toXml();
 };
 
 #endif // MAINWINDOW_H

@@ -443,7 +443,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>HodgkinHuxley Simulator 1.0.2 - Copyright 2013 by Robin Rump</string>
+     <string>HodgkinHuxley Simulator 1.0.3 - Copyright 2013 by Robin Rump</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -515,16 +515,26 @@
     <property name="title">
      <string>File</string>
     </property>
+    <widget class="QMenu" name="menuExport">
+     <property name="title">
+      <string>Export to...</string>
+     </property>
+     <addaction name="actionJson"/>
+     <addaction name="actionXml"/>
+    </widget>
     <addaction name="actionAbout"/>
     <addaction name="actionSettings"/>
     <addaction name="separator"/>
-    <addaction name="actionJson"/>
+    <addaction name="menuExport"/>
    </widget>
    <widget class="QMenu" name="menuWindow">
     <property name="title">
      <string>Window</string>
     </property>
     <addaction name="actionWelcome"/>
+    <addaction name="separator"/>
+    <addaction name="actionReset"/>
+    <addaction name="actionClear"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuWindow"/>
@@ -556,15 +566,39 @@
   </action>
   <action name="actionJson">
    <property name="text">
-    <string>Export to Json</string>
+    <string>Json</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+S</string>
+    <string>Ctrl+J</string>
    </property>
   </action>
   <action name="actionWelcome">
    <property name="text">
     <string>Show welcoming page</string>
+   </property>
+  </action>
+  <action name="actionXml">
+   <property name="text">
+    <string>Xml</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+X</string>
+   </property>
+  </action>
+  <action name="actionReset">
+   <property name="text">
+    <string>Reset</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
+   </property>
+  </action>
+  <action name="actionClear">
+   <property name="text">
+    <string>Clear</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+C</string>
    </property>
   </action>
  </widget>

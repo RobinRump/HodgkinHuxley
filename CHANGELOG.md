@@ -1,6 +1,10 @@
 Changelog
 =============
 
+##### 1.0.3
+- Added: Export to XML
+- Fixed: Several code optimizations
+
 ##### 1.0.2
 - Added: Plot now displays legend.
 - Fixed: Second y-axis (concerning gating variables) is now shown.
