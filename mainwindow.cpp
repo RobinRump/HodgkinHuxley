@@ -34,7 +34,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     this->setWindowTitle("HodgkinHuxley Simulator - Robin Rump");
     this->setMinimumWidth(800);
-    this->setMaximumHeight(630);
+    this->setMinimumHeight(630);
 
     // setup variables and sliders
     this->timer = new QTimer(this);
@@ -377,8 +377,11 @@ void MainWindow::focusOutEvent(QFocusEvent* event) {
 }
 
 void MainWindow::resizeEvent(QResizeEvent* event) {
-
-
+    ui->plot->setGeometry(ui->plot->x(), ui->plot->y(), this->size().width()-40, this->size().height()-259);
+    ui->tabCurrent->setGeometry(ui->tabCurrent->x(), this->size().height()-220, ui->tabCurrent->width(), ui->tabCurrent->height());
+    ui->tabSettings->setGeometry(ui->tabSettings->x(), this->size().height()-220, ui->tabSettings->width(), ui->tabSettings->height());
+    ui->controlBox->setGeometry(ui->controlBox->x(), this->size().height()-228, ui->controlBox->width(), ui->controlBox->height());
+    ui->copyright->setGeometry(ui->copyright->x(), this->size().height()-70, ui->copyright->width(), ui->copyright->height());
 }
 
 void MainWindow::pause()

@@ -24,7 +24,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QTabWidget" name="tabWidget">
+   <widget class="QTabWidget" name="tabCurrent">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -179,7 +179,7 @@
      </widget>
     </widget>
    </widget>
-   <widget class="QTabWidget" name="tabWidget2">
+   <widget class="QTabWidget" name="tabSettings">
     <property name="geometry">
      <rect>
       <x>300</x>
@@ -433,7 +433,7 @@
      </widget>
     </widget>
    </widget>
-   <widget class="QLabel" name="label">
+   <widget class="QLabel" name="copyright">
     <property name="geometry">
      <rect>
       <x>349</x>
