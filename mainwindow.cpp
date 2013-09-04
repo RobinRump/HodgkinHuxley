@@ -132,7 +132,7 @@ MainWindow::MainWindow(QWidget *parent) :
     if (this->config->exists()) {
         json = this->fromConfig();
     } else {
-        json.insert("version", 102);
+        json.insert("version", 103);
         json.insert("startup", true);
         this->toConfig(json);
     }
