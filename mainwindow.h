@@ -79,7 +79,6 @@ public:
     QJsonObject fromConfig();
     bool toConfig(QJsonObject j);
 
-    void focusOutEvent(QFocusEvent* event);
     void resizeEvent(QResizeEvent* event);
 
 private:

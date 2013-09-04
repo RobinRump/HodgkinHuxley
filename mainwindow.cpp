@@ -372,10 +372,6 @@ void MainWindow::changeCurrentMode(int m)
     }
 }
 
-void MainWindow::focusOutEvent(QFocusEvent* event) {
-    this->pause();
-}
-
 void MainWindow::resizeEvent(QResizeEvent* event) {
     ui->plot->setGeometry(ui->plot->x(), ui->plot->y(), this->size().width()-40, this->size().height()-259);
     ui->copyright->setGeometry(this->size().width()-451, this->size().height()-70, ui->copyright->width(), ui->copyright->height());
