@@ -378,10 +378,10 @@ void MainWindow::focusOutEvent(QFocusEvent* event) {
 
 void MainWindow::resizeEvent(QResizeEvent* event) {
     ui->plot->setGeometry(ui->plot->x(), ui->plot->y(), this->size().width()-40, this->size().height()-259);
+    ui->copyright->setGeometry(this->size().width()-451, this->size().height()-70, ui->copyright->width(), ui->copyright->height());
     ui->tabCurrent->setGeometry(ui->tabCurrent->x(), this->size().height()-220, ui->tabCurrent->width(), ui->tabCurrent->height());
-    ui->tabSettings->setGeometry(ui->tabSettings->x(), this->size().height()-220, ui->tabSettings->width(), ui->tabSettings->height());
-    ui->controlBox->setGeometry(ui->controlBox->x(), this->size().height()-228, ui->controlBox->width(), ui->controlBox->height());
-    ui->copyright->setGeometry(ui->copyright->x(), this->size().height()-70, ui->copyright->width(), ui->copyright->height());
+    ui->controlBox->setGeometry(this->size().width()-120, this->size().height()-228, ui->controlBox->width(), ui->controlBox->height());
+    ui->tabSettings->setGeometry((ui->controlBox->x()-(ui->tabCurrent->x()+ui->tabCurrent->width()))/2 + ui->tabCurrent->x() + ui->tabCurrent->width() - ui->tabSettings->width()/2, this->size().height()-220, ui->tabSettings->width(), ui->tabSettings->height());
 }
 
 void MainWindow::pause()
