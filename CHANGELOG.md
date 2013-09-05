@@ -1,6 +1,9 @@
 Changelog
 =============
 
+##### 1.0.4
+- Added: Window and plot can now be resized (up to FullHD and bigger)
+
 ##### 1.0.3
 - Added: Export to XML
 - Fixed: Several code optimizations
