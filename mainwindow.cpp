@@ -33,6 +33,8 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     this->setWindowTitle("HodgkinHuxley Simulator - Robin Rump");
+    this->setMinimumWidth(800);
+    this->setMinimumHeight(630);
 
     // setup variables and sliders
     this->timer = new QTimer(this);
@@ -132,7 +134,7 @@ MainWindow::MainWindow(QWidget *parent) :
     if (this->config->exists()) {
         json = this->fromConfig();
     } else {
-        json.insert("version", 103);
+        json.insert("version", 104);
         json.insert("startup", true);
         this->toConfig(json);
     }
@@ -370,8 +372,12 @@ void MainWindow::changeCurrentMode(int m)
     }
 }
 
-void MainWindow::focusOutEvent(QFocusEvent* event) {
-    this->pause();
+void MainWindow::resizeEvent(QResizeEvent* event) {
+    ui->plot->setGeometry(ui->plot->x(), ui->plot->y(), this->size().width()-40, this->size().height()-259);
+    ui->copyright->setGeometry(this->size().width()-451, this->size().height()-70, ui->copyright->width(), ui->copyright->height());
+    ui->tabCurrent->setGeometry(ui->tabCurrent->x(), this->size().height()-220, ui->tabCurrent->width(), ui->tabCurrent->height());
+    ui->controlBox->setGeometry(this->size().width()-120, this->size().height()-228, ui->controlBox->width(), ui->controlBox->height());
+    ui->tabSettings->setGeometry((ui->controlBox->x()-(ui->tabCurrent->x()+ui->tabCurrent->width()))/2 + ui->tabCurrent->x() + ui->tabCurrent->width() - ui->tabSettings->width()/2, this->size().height()-220, ui->tabSettings->width(), ui->tabSettings->height());
 }
 
 void MainWindow::pause()

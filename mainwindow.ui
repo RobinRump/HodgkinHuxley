@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>631</height>
+    <height>630</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,7 +24,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QTabWidget" name="tabWidget">
+   <widget class="QTabWidget" name="tabCurrent">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -179,7 +179,7 @@
      </widget>
     </widget>
    </widget>
-   <widget class="QTabWidget" name="tabWidget2">
+   <widget class="QTabWidget" name="tabSettings">
     <property name="geometry">
      <rect>
       <x>300</x>
@@ -433,7 +433,7 @@
      </widget>
     </widget>
    </widget>
-   <widget class="QLabel" name="label">
+   <widget class="QLabel" name="copyright">
     <property name="geometry">
      <rect>
       <x>349</x>
@@ -443,7 +443,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>HodgkinHuxley Simulator 1.0.3 - Copyright 2013 by Robin Rump</string>
+     <string>HodgkinHuxley Simulator 1.0.4 - Copyright 2013 by Robin Rump</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
