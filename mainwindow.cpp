@@ -597,20 +597,6 @@ void MainWindow::toPdf()
     }
 }
 
-void MainWindow::toPng()
-{
-    bool paused = true;
-    if (this->isPaused == false) {
-        this->pause();
-        paused = false;
-    }
-    ui->plot->savePng(QFileDialog::getSaveFileName(this, "Select Directory", QDir::toNativeSeparators(QDir::currentPath() + "/HH_" + QDateTime().currentDateTime().toString("yyyy_MM_dd_hh_mm")), "*.png"));
-
-    if (paused == false) {
-        this->pause();
-    }
-}
-
 double MainWindow::alphaN(double v) { return 0.01*(-v + 10)/(exp((-v + 10)/10) - 1); };
 double MainWindow::betaN(double v) { return 0.125*exp(-v/80); };
 
