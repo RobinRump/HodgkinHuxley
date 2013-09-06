@@ -138,6 +138,8 @@ private slots:
     void toJson();
     void toXml();
     void toPng();
+    void toJpg();
+    void toPdf();
 };
 
 #endif // MAINWINDOW_H

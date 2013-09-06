@@ -523,6 +523,8 @@
      <addaction name="actionXml"/>
      <addaction name="separator"/>
      <addaction name="actionPng"/>
+     <addaction name="actionJpg"/>
+     <addaction name="actionPdf"/>
     </widget>
     <addaction name="actionAbout"/>
     <addaction name="actionSettings"/>
@@ -608,7 +610,23 @@
     <string>Png</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+P</string>
+    <string>Ctrl+P, Ctrl+N</string>
+   </property>
+  </action>
+  <action name="actionJpg">
+   <property name="text">
+    <string>Jpg</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+J, Ctrl+P</string>
+   </property>
+  </action>
+  <action name="actionPdf">
+   <property name="text">
+    <string>Pdf</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+P, Ctrl+F</string>
    </property>
   </action>
  </widget>
