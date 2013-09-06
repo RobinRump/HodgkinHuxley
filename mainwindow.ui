@@ -521,6 +521,8 @@
      </property>
      <addaction name="actionJson"/>
      <addaction name="actionXml"/>
+     <addaction name="separator"/>
+     <addaction name="actionPng"/>
     </widget>
     <addaction name="actionAbout"/>
     <addaction name="actionSettings"/>
@@ -599,6 +601,14 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+C</string>
+   </property>
+  </action>
+  <action name="actionPng">
+   <property name="text">
+    <string>Png</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+P</string>
    </property>
   </action>
  </widget>

@@ -137,6 +137,7 @@ private slots:
 
     void toJson();
     void toXml();
+    void toPng();
 };
 
 #endif // MAINWINDOW_H

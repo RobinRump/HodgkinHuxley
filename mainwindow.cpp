@@ -162,6 +162,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionAbout, SIGNAL(triggered(bool)), this, SLOT(about()));
     connect(ui->actionJson, SIGNAL(triggered(bool)), this, SLOT(toJson()));
     connect(ui->actionXml, SIGNAL(triggered(bool)), this, SLOT(toXml()));
+    connect(ui->actionPng, SIGNAL(triggered(bool)), this, SLOT(toPng()));
     connect(ui->actionWelcome, SIGNAL(triggered(bool)), this, SLOT(welcome()));
     connect(ui->actionReset, SIGNAL(triggered(bool)), this, SLOT(reset()));
     connect(ui->actionClear, SIGNAL(triggered(bool)), this, SLOT(clear()));
@@ -546,6 +547,20 @@ void MainWindow::toXml()
     stream.writeEndDocument();
 
     file.close();
+
+    if (paused == false) {
+        this->pause();
+    }
+}
+
+void MainWindow::toPng()
+{
+    bool paused = true;
+    if (this->isPaused == false) {
+        this->pause();
+        paused = false;
+    }
+    ui->plot->savePng(QFileDialog::getSaveFileName(this, "Select Directory", QDir::toNativeSeparators(QDir::currentPath() + "/HH_" + QDateTime().currentDateTime().toString("yyyy_MM_dd_hh_mm")), "*.png"));
 
     if (paused == false) {
         this->pause();
