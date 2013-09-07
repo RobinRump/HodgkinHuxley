@@ -1,6 +1,10 @@
 Changelog
 =============
 
+##### 1.0.5
+- Added: Graphs can now be exported to Png, Pdf and Jpg
+- Fixed: Removed unnecessary code
+
 ##### 1.0.4
 - Added: Window and plot can now be resized (up to FullHD and bigger)
 

@@ -134,7 +134,7 @@ MainWindow::MainWindow(QWidget *parent) :
     if (this->config->exists()) {
         json = this->fromConfig();
     } else {
-        json.insert("version", 104);
+        json.insert("version", 105);
         json.insert("startup", true);
         this->toConfig(json);
     }
@@ -162,6 +162,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionAbout, SIGNAL(triggered(bool)), this, SLOT(about()));
     connect(ui->actionJson, SIGNAL(triggered(bool)), this, SLOT(toJson()));
     connect(ui->actionXml, SIGNAL(triggered(bool)), this, SLOT(toXml()));
+    connect(ui->actionPng, SIGNAL(triggered(bool)), this, SLOT(toPng()));
+    connect(ui->actionJpg, SIGNAL(triggered(bool)), this, SLOT(toJpg()));
+    connect(ui->actionPdf, SIGNAL(triggered(bool)), this, SLOT(toPdf()));
     connect(ui->actionWelcome, SIGNAL(triggered(bool)), this, SLOT(welcome()));
     connect(ui->actionReset, SIGNAL(triggered(bool)), this, SLOT(reset()));
     connect(ui->actionClear, SIGNAL(triggered(bool)), this, SLOT(clear()));
@@ -546,6 +549,54 @@ void MainWindow::toXml()
     stream.writeEndDocument();
 
     file.close();
+
+    if (paused == false) {
+        this->pause();
+    }
+}
+
+void MainWindow::toPng()
+{
+    bool paused = true;
+    if (this->isPaused == false) {
+        this->pause();
+        paused = false;
+    }
+    ui->plot->savePng(QFileDialog::getSaveFileName(this, "Select Directory", QDir::toNativeSeparators(QDir::currentPath() + "/HH_" + QDateTime().currentDateTime().toString("yyyy_MM_dd_hh_mm")), "*.png"),
+                      QInputDialog::getInt(this, "Export as Png", "Width?", ui->plot->width(), 1),
+                      QInputDialog::getInt(this, "Export as Png", "Height?", ui->plot->height(), 1));
+
+    if (paused == false) {
+        this->pause();
+    }
+}
+
+void MainWindow::toJpg()
+{
+    bool paused = true;
+    if (this->isPaused == false) {
+        this->pause();
+        paused = false;
+    }
+    ui->plot->saveJpg(QFileDialog::getSaveFileName(this, "Select Directory", QDir::toNativeSeparators(QDir::currentPath() + "/HH_" + QDateTime().currentDateTime().toString("yyyy_MM_dd_hh_mm")), "*.jpg"),
+                      QInputDialog::getInt(this, "Export as Jpg", "Width?", ui->plot->width(), 1),
+                      QInputDialog::getInt(this, "Export as Jpg", "Height?", ui->plot->height(), 1));
+
+    if (paused == false) {
+        this->pause();
+    }
+}
+
+void MainWindow::toPdf()
+{
+    bool paused = true;
+    if (this->isPaused == false) {
+        this->pause();
+        paused = false;
+    }
+    ui->plot->savePdf(QFileDialog::getSaveFileName(this, "Select Directory", QDir::toNativeSeparators(QDir::currentPath() + "/HH_" + QDateTime().currentDateTime().toString("yyyy_MM_dd_hh_mm")), "*.pdf"), false,
+                      QInputDialog::getInt(this, "Export as Pdf", "Width?", ui->plot->width(), 1),
+                      QInputDialog::getInt(this, "Export as Pdf", "Height?", ui->plot->height(), 1));
 
     if (paused == false) {
         this->pause();

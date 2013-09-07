@@ -35,6 +35,7 @@
 #include <QDateTime>
 #include <QFile>
 #include <QFileDialog>
+#include <QInputDialog>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonValue>
@@ -137,6 +138,9 @@ private slots:
 
     void toJson();
     void toXml();
+    void toPng();
+    void toJpg();
+    void toPdf();
 };
 
 #endif // MAINWINDOW_H

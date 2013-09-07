@@ -1,4 +1,4 @@
-HodgkinHuxley 1.0.4
+HodgkinHuxley 1.0.5
 =============
 A simulator of Hodgkin &amp; Huxley's neuron model.
 
@@ -8,6 +8,7 @@ Features
 - Dynamically change the conductivities of the membrane.
 - Watch the change of the gating variables n, m, h.
 - Export data to JSON and XML.
+- Export graphs to PNG, JPG and PDF.
 - Written in C++ and Qt.
 
 Copyright
