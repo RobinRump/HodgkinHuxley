@@ -562,7 +562,9 @@ void MainWindow::toPng()
         this->pause();
         paused = false;
     }
-    ui->plot->savePng(QFileDialog::getSaveFileName(this, "Select Directory", QDir::toNativeSeparators(QDir::currentPath() + "/HH_" + QDateTime().currentDateTime().toString("yyyy_MM_dd_hh_mm")), "*.png"));
+    ui->plot->savePng(QFileDialog::getSaveFileName(this, "Select Directory", QDir::toNativeSeparators(QDir::currentPath() + "/HH_" + QDateTime().currentDateTime().toString("yyyy_MM_dd_hh_mm")), "*.png"),
+                      QInputDialog::getInt(this, "Export as Png", "Width?", ui->plot->width()),
+                      QInputDialog::getInt(this, "Export as Png", "Height?", ui->plot->height()));
 
     if (paused == false) {
         this->pause();

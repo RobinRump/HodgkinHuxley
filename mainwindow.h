@@ -35,6 +35,7 @@
 #include <QDateTime>
 #include <QFile>
 #include <QFileDialog>
+#include <QInputDialog>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonValue>
