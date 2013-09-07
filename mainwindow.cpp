@@ -564,7 +564,7 @@ void MainWindow::toPng()
     }
     ui->plot->savePng(QFileDialog::getSaveFileName(this, "Select Directory", QDir::toNativeSeparators(QDir::currentPath() + "/HH_" + QDateTime().currentDateTime().toString("yyyy_MM_dd_hh_mm")), "*.png"),
                       QInputDialog::getInt(this, "Export as Png", "Width?", ui->plot->width(), 1),
-                      QInputDialog::getInt(this, "Export as Png", "Height?", ui->plot->height()), 1);
+                      QInputDialog::getInt(this, "Export as Png", "Height?", ui->plot->height(), 1));
 
     if (paused == false) {
         this->pause();
@@ -578,7 +578,9 @@ void MainWindow::toJpg()
         this->pause();
         paused = false;
     }
-    ui->plot->saveJpg(QFileDialog::getSaveFileName(this, "Select Directory", QDir::toNativeSeparators(QDir::currentPath() + "/HH_" + QDateTime().currentDateTime().toString("yyyy_MM_dd_hh_mm")), "*.jpg"));
+    ui->plot->saveJpg(QFileDialog::getSaveFileName(this, "Select Directory", QDir::toNativeSeparators(QDir::currentPath() + "/HH_" + QDateTime().currentDateTime().toString("yyyy_MM_dd_hh_mm")), "*.jpg"),
+                      QInputDialog::getInt(this, "Export as Jpg", "Width?", ui->plot->width(), 1),
+                      QInputDialog::getInt(this, "Export as Jpg", "Height?", ui->plot->height(), 1));
 
     if (paused == false) {
         this->pause();
@@ -592,7 +594,9 @@ void MainWindow::toPdf()
         this->pause();
         paused = false;
     }
-    ui->plot->savePdf(QFileDialog::getSaveFileName(this, "Select Directory", QDir::toNativeSeparators(QDir::currentPath() + "/HH_" + QDateTime().currentDateTime().toString("yyyy_MM_dd_hh_mm")), "*.pdf"));
+    ui->plot->savePdf(QFileDialog::getSaveFileName(this, "Select Directory", QDir::toNativeSeparators(QDir::currentPath() + "/HH_" + QDateTime().currentDateTime().toString("yyyy_MM_dd_hh_mm")), "*.pdf"), false,
+                      QInputDialog::getInt(this, "Export as Pdf", "Width?", ui->plot->width(), 1),
+                      QInputDialog::getInt(this, "Export as Pdf", "Height?", ui->plot->height(), 1));
 
     if (paused == false) {
         this->pause();
