@@ -443,7 +443,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>HodgkinHuxley Simulator 1.0.4 - Copyright 2013 by Robin Rump</string>
+     <string>HodgkinHuxley Simulator 1.0.5 - Copyright 2013 by Robin Rump</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
