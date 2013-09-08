@@ -385,15 +385,14 @@ void MainWindow::resizeEvent(QResizeEvent* event) {
 
 void MainWindow::pause()
 {
-    if (this->isPaused == true) {
-        this->isPaused = false;
-        ui->pause->setText("||");
-        this->timer->start(10);
-    } else {
-        this->isPaused = true;
-        ui->pause->setText(">");
-        this->timer->stop();
-    }
+    ui->pause->setText(">");
+    this->timer->stop();
+}
+
+void MainWindow::unpause()
+{
+    ui->pause->setText("||");
+    this->timer->start(10);
 }
 
 void MainWindow::reset()

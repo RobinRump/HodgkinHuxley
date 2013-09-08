@@ -75,6 +75,14 @@ public:
         graphH        = 4
     };
 
+    enum Files {
+        fileXml  = 0,
+        fileJson = 1,
+        filePng  = 2,
+        fileJpg  = 3,
+        filePdf  = 4
+    };
+
     void init();
 
     QJsonObject fromConfig();
@@ -128,6 +136,7 @@ private slots:
     void showH();
 
     void pause();
+    void unpause();
     void reset();
     void clear();
     void changeCurrentMode(int m);
