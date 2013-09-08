@@ -154,7 +154,7 @@ MainWindow::MainWindow(QWidget *parent) :
     signalMapper->setMapping(ui->impulseButton, currentImpulse);
     connect(signalMapper, SIGNAL(mapped(int)), this, SLOT(changeCurrentMode(int)));
 
-    connect(ui->pause, SIGNAL(clicked(bool)), this, SLOT(pause()));
+    connect(ui->pause, SIGNAL(clicked(bool)), this, SLOT(switchPause()));
     connect(ui->reset, SIGNAL(clicked(bool)), this, SLOT(reset()));
     connect(ui->clear, SIGNAL(clicked(bool)), this, SLOT(clear()));
 
@@ -385,14 +385,25 @@ void MainWindow::resizeEvent(QResizeEvent* event) {
 
 void MainWindow::pause()
 {
-    ui->pause->setText(">");
     this->timer->stop();
+    this->isPaused = true;
+    ui->pause->setText(">");
 }
 
 void MainWindow::unpause()
 {
+    this->isPaused = false;
     ui->pause->setText("||");
     this->timer->start(10);
+}
+
+void MainWindow::switchPause()
+{
+    if (this->isPaused == true) {
+        this->unpause();
+    } else {
+        this->pause();
+    }
 }
 
 void MainWindow::reset()
@@ -418,9 +429,7 @@ void MainWindow::clear()
 
 void MainWindow::settings()
 {
-    if (this->isPaused == false) {
-        this->pause();
-    }
+    this->pause();
     this->s->setMinCurrent(ui->currentSlider->minimum());
     this->s->setMaxCurrent(ui->currentSlider->maximum());
     this->s->setMinGNa(ui->gNaSlider->minimum());
@@ -446,22 +455,21 @@ void MainWindow::updatePreferences()
         this->s->getMinGK()      > this->s->getMaxGK()      ||
         this->s->getMinGL()      > this->s->getMaxGL())     {
         QMessageBox::warning(this, "Warning", "The minimum values must not be bigger than the maxiumum values!");
-        this->pause();
-        return;
+    } else {
+        ui->currentSlider->setMinimum(this->s->getMinCurrent());
+        ui->currentSlider->setMaximum(this->s->getMaxCurrent());
+        ui->gNaSlider->setMinimum(this->s->getMinGNa());
+        ui->gNaSlider->setMaximum(this->s->getMaxGNa());
+        ui->gKSlider->setMinimum(this->s->getMinGK());
+        ui->gKSlider->setMaximum(this->s->getMaxGK());
+        ui->gLSlider->setMinimum(this->s->getMinGL());
+        ui->gLSlider->setMaximum(this->s->getMaxGL());
+        QVector<QColor> colors = this->s->getColors();
+        for (int i = 0; i<5; i++) {
+            ui->plot->graph(i)->setPen(QPen(colors[i]));
+        }
     }
-    ui->currentSlider->setMinimum(this->s->getMinCurrent());
-    ui->currentSlider->setMaximum(this->s->getMaxCurrent());
-    ui->gNaSlider->setMinimum(this->s->getMinGNa());
-    ui->gNaSlider->setMaximum(this->s->getMaxGNa());
-    ui->gKSlider->setMinimum(this->s->getMinGK());
-    ui->gKSlider->setMaximum(this->s->getMaxGK());
-    ui->gLSlider->setMinimum(this->s->getMinGL());
-    ui->gLSlider->setMaximum(this->s->getMaxGL());
-    QVector<QColor> colors = this->s->getColors();
-    for (int i = 0; i<5; i++) {
-        ui->plot->graph(i)->setPen(QPen(colors[i]));
-    }
-    this->pause();
+    this->unpause();
 }
 
 void MainWindow::about()
@@ -508,7 +516,7 @@ void MainWindow::toJson()
     file.write(bytes);
     file.close();
     if (paused == false) {
-        this->pause();
+        this->unpause();
     }
 }
 
@@ -550,7 +558,7 @@ void MainWindow::toXml()
     file.close();
 
     if (paused == false) {
-        this->pause();
+        this->unpause();
     }
 }
 
@@ -566,7 +574,7 @@ void MainWindow::toPng()
                       QInputDialog::getInt(this, "Export as Png", "Height?", ui->plot->height(), 1));
 
     if (paused == false) {
-        this->pause();
+        this->unpause();
     }
 }
 
@@ -582,7 +590,7 @@ void MainWindow::toJpg()
                       QInputDialog::getInt(this, "Export as Jpg", "Height?", ui->plot->height(), 1));
 
     if (paused == false) {
-        this->pause();
+        this->unpause();
     }
 }
 
@@ -598,7 +606,7 @@ void MainWindow::toPdf()
                       QInputDialog::getInt(this, "Export as Pdf", "Height?", ui->plot->height(), 1));
 
     if (paused == false) {
-        this->pause();
+        this->unpause();
     }
 }
 

@@ -137,6 +137,7 @@ private slots:
 
     void pause();
     void unpause();
+    void switchPause();
     void reset();
     void clear();
     void changeCurrentMode(int m);
