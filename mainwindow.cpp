@@ -406,14 +406,19 @@ void MainWindow::switchPause()
     }
 }
 
-void savePauseState()
+void MainWindow::savePauseState(bool p)
 {
-
+    this->pauseState = p;
 }
 
-void loadPauseState()
+void MainWindow::loadPauseState()
 {
-
+    if (this->pauseState == true) {
+        this->pause();
+    } else {
+        this->unpause();
+    }
+    this->pauseState = this->isPaused;
 }
 
 void MainWindow::reset()
