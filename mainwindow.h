@@ -106,6 +106,8 @@ private:
     int impulseDuration, impulseStart;
 
     bool isPaused;
+    bool pauseState;
+
     bool isNShown, isMShown, isHShown;
 
     QTimer *timer;
@@ -138,6 +140,9 @@ private slots:
     void pause();
     void unpause();
     void switchPause();
+    void savePauseState();
+    void loadPauseState();
+
     void reset();
     void clear();
     void changeCurrentMode(int m);

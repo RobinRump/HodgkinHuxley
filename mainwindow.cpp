@@ -406,6 +406,16 @@ void MainWindow::switchPause()
     }
 }
 
+void savePauseState()
+{
+
+}
+
+void loadPauseState()
+{
+
+}
+
 void MainWindow::reset()
 {
     this->changeCurrentMode(currentManual);
