@@ -140,7 +140,7 @@ private slots:
     void pause();
     void unpause();
     void switchPause();
-    void savePauseState(bool p);
+    void savePauseState();
     void loadPauseState();
 
     void reset();

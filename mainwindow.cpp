@@ -406,9 +406,9 @@ void MainWindow::switchPause()
     }
 }
 
-void MainWindow::savePauseState(bool p)
+void MainWindow::savePauseState()
 {
-    this->pauseState = p;
+    this->pauseState = this->isPaused;
 }
 
 void MainWindow::loadPauseState()
@@ -444,7 +444,9 @@ void MainWindow::clear()
 
 void MainWindow::settings()
 {
+    this->savePauseState();
     this->pause();
+
     this->s->setMinCurrent(ui->currentSlider->minimum());
     this->s->setMaxCurrent(ui->currentSlider->maximum());
     this->s->setMinGNa(ui->gNaSlider->minimum());
@@ -484,7 +486,8 @@ void MainWindow::updatePreferences()
             ui->plot->graph(i)->setPen(QPen(colors[i]));
         }
     }
-    this->unpause();
+
+    this->loadPauseState();
 }
 
 void MainWindow::about()
@@ -504,11 +507,9 @@ int MainWindow::minCurrentValue()
 
 void MainWindow::toJson()
 {
-    bool paused = true;
-    if (this->isPaused == false) {
-        this->pause();
-        paused = false;
-    }
+    this->savePauseState();
+    this->pause();
+
     QJsonDocument document;
     QJsonObject json, jsonVoltage, jsonCurrent, jsonN, jsonM, jsonH;
     for (int i = 0; i < this->time.size(); i++) {
@@ -530,18 +531,14 @@ void MainWindow::toJson()
     file.open(QIODevice::WriteOnly | QIODevice::Text);
     file.write(bytes);
     file.close();
-    if (paused == false) {
-        this->unpause();
-    }
+
+    this->loadPauseState();
 }
 
 void MainWindow::toXml()
 {
-    bool paused = true;
-    if (this->isPaused == false) {
-        this->pause();
-        paused = false;
-    }
+    this->savePauseState();
+    this->pause();
 
     QFile file(QFileDialog::getSaveFileName(this, "Select Directory", QDir::toNativeSeparators(QDir::currentPath() + "/HH_" + QDateTime().currentDateTime().toString("yyyy_MM_dd_hh_mm")), "*.xml"));
     file.open(QIODevice::WriteOnly | QIODevice::Text);
@@ -569,60 +566,45 @@ void MainWindow::toXml()
         j++;
     }
     stream.writeEndDocument();
-
     file.close();
 
-    if (paused == false) {
-        this->unpause();
-    }
+    this->loadPauseState();
 }
 
 void MainWindow::toPng()
 {
-    bool paused = true;
-    if (this->isPaused == false) {
-        this->pause();
-        paused = false;
-    }
+    this->savePauseState();
+    this->pause();
+
     ui->plot->savePng(QFileDialog::getSaveFileName(this, "Select Directory", QDir::toNativeSeparators(QDir::currentPath() + "/HH_" + QDateTime().currentDateTime().toString("yyyy_MM_dd_hh_mm")), "*.png"),
                       QInputDialog::getInt(this, "Export as Png", "Width?", ui->plot->width(), 1),
                       QInputDialog::getInt(this, "Export as Png", "Height?", ui->plot->height(), 1));
 
-    if (paused == false) {
-        this->unpause();
-    }
+    this->loadPauseState();
 }
 
 void MainWindow::toJpg()
 {
-    bool paused = true;
-    if (this->isPaused == false) {
-        this->pause();
-        paused = false;
-    }
+    this->savePauseState();
+    this->pause();
+
     ui->plot->saveJpg(QFileDialog::getSaveFileName(this, "Select Directory", QDir::toNativeSeparators(QDir::currentPath() + "/HH_" + QDateTime().currentDateTime().toString("yyyy_MM_dd_hh_mm")), "*.jpg"),
                       QInputDialog::getInt(this, "Export as Jpg", "Width?", ui->plot->width(), 1),
                       QInputDialog::getInt(this, "Export as Jpg", "Height?", ui->plot->height(), 1));
 
-    if (paused == false) {
-        this->unpause();
-    }
+    this->loadPauseState();
 }
 
 void MainWindow::toPdf()
 {
-    bool paused = true;
-    if (this->isPaused == false) {
-        this->pause();
-        paused = false;
-    }
+    this->savePauseState();
+    this->pause();
+
     ui->plot->savePdf(QFileDialog::getSaveFileName(this, "Select Directory", QDir::toNativeSeparators(QDir::currentPath() + "/HH_" + QDateTime().currentDateTime().toString("yyyy_MM_dd_hh_mm")), "*.pdf"), false,
                       QInputDialog::getInt(this, "Export as Pdf", "Width?", ui->plot->width(), 1),
                       QInputDialog::getInt(this, "Export as Pdf", "Height?", ui->plot->height(), 1));
 
-    if (paused == false) {
-        this->unpause();
-    }
+    this->loadPauseState();
 }
 
 double MainWindow::alphaN(double v) { return 0.01*(-v + 10)/(exp((-v + 10)/10) - 1); };
