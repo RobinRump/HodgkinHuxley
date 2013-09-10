@@ -32,7 +32,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    this->setWindowTitle("HodgkinHuxley Simulator - Robin Rump");
+    this->setWindowTitle("HodgkinHuxley Simulator 1.0.6 - Robin Rump");
     this->setMinimumWidth(800);
     this->setMinimumHeight(630);
 
@@ -135,7 +135,7 @@ MainWindow::MainWindow(QWidget *parent) :
     if (this->config->exists()) {
         json = this->fromConfig();
     } else {
-        json.insert("version", 105);
+        json.insert("version", 106);
         json.insert("startup", true);
         this->toConfig(json);
     }
