@@ -32,7 +32,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    this->setWindowTitle("HodgkinHuxley Simulator - Robin Rump");
+    this->setWindowTitle("HodgkinHuxley Simulator 1.0.6 - Robin Rump");
     this->setMinimumWidth(800);
     this->setMinimumHeight(630);
 
@@ -83,8 +83,8 @@ MainWindow::MainWindow(QWidget *parent) :
     this->values[4] = &this->hh;
 
     // plot config
-    ui->plot->setInteraction(QCP::iRangeDrag, true);
-    ui->plot->setInteraction(QCP::iRangeZoom, true);
+    ui->plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
+
     ui->plot->plotLayout()->insertRow(0);
     ui->plot->plotLayout()->addElement(0, 0, new QCPPlotTitle(ui->plot, "HodgkinHuxley"));
 
@@ -95,6 +95,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->plot->legend->setFont(legendFont);
     ui->plot->legend->setBrush(QBrush(QColor(255,255,255,230)));
     ui->plot->legend->setIconSize(QSize(10, 3));
+    ui->plot->legend->setSelectableParts(QCPLegend::spItems);
     ui->plot->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignBottom|Qt::AlignRight);
 
     // graphes
@@ -134,7 +135,7 @@ MainWindow::MainWindow(QWidget *parent) :
     if (this->config->exists()) {
         json = this->fromConfig();
     } else {
-        json.insert("version", 105);
+        json.insert("version", 106);
         json.insert("startup", true);
         this->toConfig(json);
     }
@@ -154,7 +155,7 @@ MainWindow::MainWindow(QWidget *parent) :
     signalMapper->setMapping(ui->impulseButton, currentImpulse);
     connect(signalMapper, SIGNAL(mapped(int)), this, SLOT(changeCurrentMode(int)));
 
-    connect(ui->pause, SIGNAL(clicked(bool)), this, SLOT(pause()));
+    connect(ui->pause, SIGNAL(clicked(bool)), this, SLOT(switchPause()));
     connect(ui->reset, SIGNAL(clicked(bool)), this, SLOT(reset()));
     connect(ui->clear, SIGNAL(clicked(bool)), this, SLOT(clear()));
 
@@ -169,6 +170,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionReset, SIGNAL(triggered(bool)), this, SLOT(reset()));
     connect(ui->actionClear, SIGNAL(triggered(bool)), this, SLOT(clear()));
 
+    // set right click
+    ui->plot->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(ui->plot, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuRequest(QPoint)));
+
     // connect and start timer
     connect(this->timer, SIGNAL(timeout()), this, SLOT(updatePlot()));
     this->timer->start(this->interval);
@@ -182,27 +187,27 @@ MainWindow::~MainWindow()
 void MainWindow::init()
 {
     // setup time variables
-    this->j        = 1;
-    this->time.resize(this->j);
+    this->j        = 0;
+    this->time.resize(this->j+1);
     this->time[0]  = 0;
 
     // init voltage
-    this->V.resize(this->j); // mV
+    this->V.resize(this->j+1); // mV
     this->V[0] = this->VRest;
 
     // init gating variables
     this->n = this->alphaN(V[0])/(this->alphaN(V[0]) + this->betaN(V[0]));
     this->m = this->alphaM(V[0])/(this->alphaM(V[0]) + this->betaM(V[0]));
     this->h = this->alphaH(V[0])/(this->alphaH(V[0]) + this->betaH(V[0]));
-    this->nh.resize(this->j);
+    this->nh.resize(this->j+1);
     this->nh[0] = this->n;
-    this->mh.resize(this->j);
+    this->mh.resize(this->j+1);
     this->mh[0] = this->m;
-    this->hh.resize(this->j);
+    this->hh.resize(this->j+1);
     this->hh[0] = this->h;
 
     // init current
-    this->I.resize(this->j); // mA
+    this->I.resize(this->j+1); // mA
     this->I[0] = 0;
     this->cI = 0;
     ui->currentSlider->setValue(this->cI);
@@ -214,12 +219,12 @@ void MainWindow::init()
 void MainWindow::updatePlot()
 {
     // resize arrays
-    this->time.resize(j+1);
-    this->V.resize(j+1);
-    this->I.resize(j+1);
-    this->nh.resize(j+1);
-    this->mh.resize(j+1);
-    this->hh.resize(j+1);
+    this->time.resize(this->j+1);
+    this->V.resize(this->j+1);
+    this->I.resize(this->j+1);
+    this->nh.resize(this->j+1);
+    this->mh.resize(this->j+1);
+    this->hh.resize(this->j+1);
 
     // check whether impulse has expired
     if (this->cMode == currentImpulse) {
@@ -260,6 +265,23 @@ void MainWindow::updatePlot()
 
     this->j++;
     this->timer->start(this->interval);
+}
+
+void MainWindow::contextMenuRequest(QPoint pos)
+{
+    QMenu *menu = new QMenu(this);
+    menu->setAttribute(Qt::WA_DeleteOnClose);
+
+    if (this->isPaused == true) {
+        menu->addAction("Unpause", this, SLOT(unpause()));
+    } else {
+        menu->addAction("Pause", this, SLOT(pause()));
+    }
+    menu->addAction("Reset settings", this, SLOT(reset()));
+    menu->addAction("Clear all graphs", this, SLOT(clear()));
+    menu->addSeparator();
+    menu->addAction("Settings", this, SLOT(settings()));
+    menu->popup(ui->plot->mapToGlobal(pos));
 }
 
 QJsonObject MainWindow::fromConfig()
@@ -385,15 +407,40 @@ void MainWindow::resizeEvent(QResizeEvent* event) {
 
 void MainWindow::pause()
 {
+    this->timer->stop();
+    this->isPaused = true;
+    ui->pause->setText(">");
+}
+
+void MainWindow::unpause()
+{
+    this->isPaused = false;
+    ui->pause->setText("||");
+    this->timer->start(10);
+}
+
+void MainWindow::switchPause()
+{
     if (this->isPaused == true) {
-        this->isPaused = false;
-        ui->pause->setText("||");
-        this->timer->start(10);
+        this->unpause();
     } else {
-        this->isPaused = true;
-        ui->pause->setText(">");
-        this->timer->stop();
+        this->pause();
     }
+}
+
+void MainWindow::savePauseState()
+{
+    this->pauseState = this->isPaused;
+}
+
+void MainWindow::loadPauseState()
+{
+    if (this->pauseState == true) {
+        this->pause();
+    } else {
+        this->unpause();
+    }
+    this->pauseState = this->isPaused;
 }
 
 void MainWindow::reset()
@@ -419,9 +466,9 @@ void MainWindow::clear()
 
 void MainWindow::settings()
 {
-    if (this->isPaused == false) {
-        this->pause();
-    }
+    this->savePauseState();
+    this->pause();
+
     this->s->setMinCurrent(ui->currentSlider->minimum());
     this->s->setMaxCurrent(ui->currentSlider->maximum());
     this->s->setMinGNa(ui->gNaSlider->minimum());
@@ -447,22 +494,22 @@ void MainWindow::updatePreferences()
         this->s->getMinGK()      > this->s->getMaxGK()      ||
         this->s->getMinGL()      > this->s->getMaxGL())     {
         QMessageBox::warning(this, "Warning", "The minimum values must not be bigger than the maxiumum values!");
-        this->pause();
-        return;
+    } else {
+        ui->currentSlider->setMinimum(this->s->getMinCurrent());
+        ui->currentSlider->setMaximum(this->s->getMaxCurrent());
+        ui->gNaSlider->setMinimum(this->s->getMinGNa());
+        ui->gNaSlider->setMaximum(this->s->getMaxGNa());
+        ui->gKSlider->setMinimum(this->s->getMinGK());
+        ui->gKSlider->setMaximum(this->s->getMaxGK());
+        ui->gLSlider->setMinimum(this->s->getMinGL());
+        ui->gLSlider->setMaximum(this->s->getMaxGL());
+        QVector<QColor> colors = this->s->getColors();
+        for (int i = 0; i<5; i++) {
+            ui->plot->graph(i)->setPen(QPen(colors[i]));
+        }
     }
-    ui->currentSlider->setMinimum(this->s->getMinCurrent());
-    ui->currentSlider->setMaximum(this->s->getMaxCurrent());
-    ui->gNaSlider->setMinimum(this->s->getMinGNa());
-    ui->gNaSlider->setMaximum(this->s->getMaxGNa());
-    ui->gKSlider->setMinimum(this->s->getMinGK());
-    ui->gKSlider->setMaximum(this->s->getMaxGK());
-    ui->gLSlider->setMinimum(this->s->getMinGL());
-    ui->gLSlider->setMaximum(this->s->getMaxGL());
-    QVector<QColor> colors = this->s->getColors();
-    for (int i = 0; i<5; i++) {
-        ui->plot->graph(i)->setPen(QPen(colors[i]));
-    }
-    this->pause();
+
+    this->loadPauseState();
 }
 
 void MainWindow::about()
@@ -475,18 +522,11 @@ void MainWindow::welcome()
     this->w->show();
 }
 
-int MainWindow::minCurrentValue()
-{
-    return ui->currentSlider->minimum();
-}
-
 void MainWindow::toJson()
 {
-    bool paused = true;
-    if (this->isPaused == false) {
-        this->pause();
-        paused = false;
-    }
+    this->savePauseState();
+    this->pause();
+
     QJsonDocument document;
     QJsonObject json, jsonVoltage, jsonCurrent, jsonN, jsonM, jsonH;
     for (int i = 0; i < this->time.size(); i++) {
@@ -508,18 +548,14 @@ void MainWindow::toJson()
     file.open(QIODevice::WriteOnly | QIODevice::Text);
     file.write(bytes);
     file.close();
-    if (paused == false) {
-        this->pause();
-    }
+
+    this->loadPauseState();
 }
 
 void MainWindow::toXml()
 {
-    bool paused = true;
-    if (this->isPaused == false) {
-        this->pause();
-        paused = false;
-    }
+    this->savePauseState();
+    this->pause();
 
     QFile file(QFileDialog::getSaveFileName(this, "Select Directory", QDir::toNativeSeparators(QDir::currentPath() + "/HH_" + QDateTime().currentDateTime().toString("yyyy_MM_dd_hh_mm")), "*.xml"));
     file.open(QIODevice::WriteOnly | QIODevice::Text);
@@ -547,60 +583,45 @@ void MainWindow::toXml()
         j++;
     }
     stream.writeEndDocument();
-
     file.close();
 
-    if (paused == false) {
-        this->pause();
-    }
+    this->loadPauseState();
 }
 
 void MainWindow::toPng()
 {
-    bool paused = true;
-    if (this->isPaused == false) {
-        this->pause();
-        paused = false;
-    }
+    this->savePauseState();
+    this->pause();
+
     ui->plot->savePng(QFileDialog::getSaveFileName(this, "Select Directory", QDir::toNativeSeparators(QDir::currentPath() + "/HH_" + QDateTime().currentDateTime().toString("yyyy_MM_dd_hh_mm")), "*.png"),
                       QInputDialog::getInt(this, "Export as Png", "Width?", ui->plot->width(), 1),
                       QInputDialog::getInt(this, "Export as Png", "Height?", ui->plot->height(), 1));
 
-    if (paused == false) {
-        this->pause();
-    }
+    this->loadPauseState();
 }
 
 void MainWindow::toJpg()
 {
-    bool paused = true;
-    if (this->isPaused == false) {
-        this->pause();
-        paused = false;
-    }
+    this->savePauseState();
+    this->pause();
+
     ui->plot->saveJpg(QFileDialog::getSaveFileName(this, "Select Directory", QDir::toNativeSeparators(QDir::currentPath() + "/HH_" + QDateTime().currentDateTime().toString("yyyy_MM_dd_hh_mm")), "*.jpg"),
                       QInputDialog::getInt(this, "Export as Jpg", "Width?", ui->plot->width(), 1),
                       QInputDialog::getInt(this, "Export as Jpg", "Height?", ui->plot->height(), 1));
 
-    if (paused == false) {
-        this->pause();
-    }
+    this->loadPauseState();
 }
 
 void MainWindow::toPdf()
 {
-    bool paused = true;
-    if (this->isPaused == false) {
-        this->pause();
-        paused = false;
-    }
+    this->savePauseState();
+    this->pause();
+
     ui->plot->savePdf(QFileDialog::getSaveFileName(this, "Select Directory", QDir::toNativeSeparators(QDir::currentPath() + "/HH_" + QDateTime().currentDateTime().toString("yyyy_MM_dd_hh_mm")), "*.pdf"), false,
                       QInputDialog::getInt(this, "Export as Pdf", "Width?", ui->plot->width(), 1),
                       QInputDialog::getInt(this, "Export as Pdf", "Height?", ui->plot->height(), 1));
 
-    if (paused == false) {
-        this->pause();
-    }
+    this->loadPauseState();
 }
 
 double MainWindow::alphaN(double v) { return 0.01*(-v + 10)/(exp((-v + 10)/10) - 1); };

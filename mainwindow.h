@@ -75,6 +75,14 @@ public:
         graphH        = 4
     };
 
+    enum Files {
+        fileXml  = 0,
+        fileJson = 1,
+        filePng  = 2,
+        fileJpg  = 3,
+        filePdf  = 4
+    };
+
     void init();
 
     QJsonObject fromConfig();
@@ -98,6 +106,8 @@ private:
     int impulseDuration, impulseStart;
 
     bool isPaused;
+    bool pauseState;
+
     bool isNShown, isMShown, isHShown;
 
     QTimer *timer;
@@ -114,9 +124,10 @@ private:
 
 public slots:
     void updatePreferences();
-    int minCurrentValue();
 
 private slots:
+    void contextMenuRequest(QPoint pos);
+
     void updatePlot();
     void updateCurrent();
     void updateGNa();
@@ -128,6 +139,11 @@ private slots:
     void showH();
 
     void pause();
+    void unpause();
+    void switchPause();
+    void savePauseState();
+    void loadPauseState();
+
     void reset();
     void clear();
     void changeCurrentMode(int m);

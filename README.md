@@ -1,4 +1,4 @@
-HodgkinHuxley 1.0.5
+HodgkinHuxley 1.0.6
 =============
 A simulator of Hodgkin &amp; Huxley's neuron model.
 

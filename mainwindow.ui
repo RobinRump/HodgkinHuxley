@@ -443,7 +443,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>HodgkinHuxley Simulator 1.0.5 - Copyright 2013 by Robin Rump</string>
+     <string>HodgkinHuxley Simulator 1.0.6 - Copyright 2013 by Robin Rump</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -573,7 +573,7 @@
     <string>Json</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+E, Ctrl+J</string>
+    <string>Ctrl+J</string>
    </property>
   </action>
   <action name="actionWelcome">
@@ -586,7 +586,7 @@
     <string>Xml</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+E, Ctrl+X</string>
+    <string>Ctrl+X</string>
    </property>
   </action>
   <action name="actionReset">
@@ -610,7 +610,7 @@
     <string>Png</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+E, Ctrl+P</string>
+    <string>Ctrl+P</string>
    </property>
   </action>
   <action name="actionJpg">
@@ -618,7 +618,7 @@
     <string>Jpg</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+E, Ctrl+J</string>
+    <string>Ctrl+G</string>
    </property>
   </action>
   <action name="actionPdf">
@@ -626,7 +626,7 @@
     <string>Pdf</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+E, Ctrl+F</string>
+    <string>Ctrl+A</string>
    </property>
   </action>
  </widget>
