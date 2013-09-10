@@ -182,27 +182,27 @@ MainWindow::~MainWindow()
 void MainWindow::init()
 {
     // setup time variables
-    this->j        = 1;
-    this->time.resize(this->j);
+    this->j        = 0;
+    this->time.resize(this->j+1);
     this->time[0]  = 0;
 
     // init voltage
-    this->V.resize(this->j); // mV
+    this->V.resize(this->j+1); // mV
     this->V[0] = this->VRest;
 
     // init gating variables
     this->n = this->alphaN(V[0])/(this->alphaN(V[0]) + this->betaN(V[0]));
     this->m = this->alphaM(V[0])/(this->alphaM(V[0]) + this->betaM(V[0]));
     this->h = this->alphaH(V[0])/(this->alphaH(V[0]) + this->betaH(V[0]));
-    this->nh.resize(this->j);
+    this->nh.resize(this->j+1);
     this->nh[0] = this->n;
-    this->mh.resize(this->j);
+    this->mh.resize(this->j+1);
     this->mh[0] = this->m;
-    this->hh.resize(this->j);
+    this->hh.resize(this->j+1);
     this->hh[0] = this->h;
 
     // init current
-    this->I.resize(this->j); // mA
+    this->I.resize(this->j+1); // mA
     this->I[0] = 0;
     this->cI = 0;
     ui->currentSlider->setValue(this->cI);
@@ -214,12 +214,12 @@ void MainWindow::init()
 void MainWindow::updatePlot()
 {
     // resize arrays
-    this->time.resize(j+1);
-    this->V.resize(j+1);
-    this->I.resize(j+1);
-    this->nh.resize(j+1);
-    this->mh.resize(j+1);
-    this->hh.resize(j+1);
+    this->time.resize(this->j+1);
+    this->V.resize(this->j+1);
+    this->I.resize(this->j+1);
+    this->nh.resize(this->j+1);
+    this->mh.resize(this->j+1);
+    this->hh.resize(this->j+1);
 
     // check whether impulse has expired
     if (this->cMode == currentImpulse) {
