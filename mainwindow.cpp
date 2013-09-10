@@ -83,8 +83,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->values[4] = &this->hh;
 
     // plot config
-    ui->plot->setInteraction(QCP::iRangeDrag, true);
-    ui->plot->setInteraction(QCP::iRangeZoom, true);
+    ui->plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
 
     ui->plot->plotLayout()->insertRow(0);
     ui->plot->plotLayout()->addElement(0, 0, new QCPPlotTitle(ui->plot, "HodgkinHuxley"));
@@ -96,6 +95,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->plot->legend->setFont(legendFont);
     ui->plot->legend->setBrush(QBrush(QColor(255,255,255,230)));
     ui->plot->legend->setIconSize(QSize(10, 3));
+    ui->plot->legend->setSelectableParts(QCPLegend::spItems);
     ui->plot->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignBottom|Qt::AlignRight);
 
     // graphes
@@ -169,6 +169,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionWelcome, SIGNAL(triggered(bool)), this, SLOT(welcome()));
     connect(ui->actionReset, SIGNAL(triggered(bool)), this, SLOT(reset()));
     connect(ui->actionClear, SIGNAL(triggered(bool)), this, SLOT(clear()));
+
+    // set right click
+    ui->plot->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(ui->plot, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuRequest(QPoint)));
 
     // connect and start timer
     connect(this->timer, SIGNAL(timeout()), this, SLOT(updatePlot()));
@@ -261,6 +265,22 @@ void MainWindow::updatePlot()
 
     this->j++;
     this->timer->start(this->interval);
+}
+
+void MainWindow::contextMenuRequest(QPoint pos)
+{
+    QMenu *menu = new QMenu(this);
+    menu->setAttribute(Qt::WA_DeleteOnClose);
+
+    if (this->isPaused == true) {
+        menu->addAction("Unpause", this, SLOT(unpause()));
+    } else {
+        menu->addAction("Pause", this, SLOT(pause()));
+    }
+    menu->addAction("Reset settings", this, SLOT(reset()));
+    menu->addAction("Clear all graphs", this, SLOT(clear()));
+
+    menu->popup(ui->plot->mapToGlobal(pos));
 }
 
 QJsonObject MainWindow::fromConfig()
@@ -499,11 +519,6 @@ void MainWindow::about()
 void MainWindow::welcome()
 {
     this->w->show();
-}
-
-int MainWindow::minCurrentValue()
-{
-    return ui->currentSlider->minimum();
 }
 
 void MainWindow::toJson()

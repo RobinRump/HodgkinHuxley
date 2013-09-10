@@ -124,9 +124,10 @@ private:
 
 public slots:
     void updatePreferences();
-    int minCurrentValue();
 
 private slots:
+    void contextMenuRequest(QPoint pos);
+
     void updatePlot();
     void updateCurrent();
     void updateGNa();
