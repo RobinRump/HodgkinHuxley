@@ -279,7 +279,8 @@ void MainWindow::contextMenuRequest(QPoint pos)
     }
     menu->addAction("Reset settings", this, SLOT(reset()));
     menu->addAction("Clear all graphs", this, SLOT(clear()));
-
+    menu->addSeparator();
+    menu->addAction("Settings", this, SLOT(settings()));
     menu->popup(ui->plot->mapToGlobal(pos));
 }
 
