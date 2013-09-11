@@ -410,12 +410,14 @@ void MainWindow::pause()
     this->timer->stop();
     this->isPaused = true;
     ui->pause->setText(">");
+    ui->statusBar->showMessage("Paused", 1500);
 }
 
 void MainWindow::unpause()
 {
     this->isPaused = false;
     ui->pause->setText("||");
+    ui->statusBar->showMessage("Unpaused", 1500);
     this->timer->start(10);
 }
 
