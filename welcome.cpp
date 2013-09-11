@@ -33,6 +33,16 @@ Welcome::Welcome(QWidget *parent) :
     ui->setupUi(this);
     this->setWindowTitle("Welcome to HodgkinHuxley!");
 
+
+    this->scene = new QGraphicsScene(ui->graphicsView->sceneRect());
+    this->items = new QGraphicsItemGroup;
+    this->scene->addItem(this->items);
+    this->items->addToGroup(this->scene->addPixmap(QPixmap(":/resources/controls.png")));
+
+    ui->graphicsView->setScene(this->scene);
+
+
+
     // connect ui elements with slots
     connect(ui->closeButton, SIGNAL(clicked(bool)), this, SLOT(close()));
 }

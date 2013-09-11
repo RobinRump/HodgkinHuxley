@@ -27,6 +27,12 @@
 #define WELCOME_H
 
 #include <QDialog>
+#include <QDebug>
+#include <QList>
+#include <QGraphicsItem>
+#include <QGraphicsItemGroup>
+#include <QGraphicsScene>
+#include <QPixmap>
 
 namespace Ui {
 class Welcome;
@@ -42,6 +48,8 @@ public:
     
 private:
     Ui::Welcome *ui;
+    QGraphicsScene *scene;
+    QGraphicsItemGroup *items;
 };
 
 #endif // WELCOME_H

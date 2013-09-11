@@ -45,30 +45,11 @@
   <widget class="QGraphicsView" name="graphicsView">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>200</y>
-     <width>121</width>
-     <height>151</height>
+     <x>10</x>
+     <y>10</y>
+     <width>581</width>
+     <height>351</height>
     </rect>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">background-image: url(:/resources/resources/controls.png);
-background-repeat: no-repeat;</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label">
-   <property name="geometry">
-    <rect>
-     <x>160</x>
-     <y>240</y>
-     <width>261</width>
-     <height>51</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Use the controls to pause/unpause&lt;br&gt;
-plotting, to clear the graph or to reset&lt;br&gt;
-the settings. </string>
    </property>
   </widget>
  </widget>
