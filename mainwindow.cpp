@@ -524,19 +524,21 @@ void MainWindow::toJson()
     this->pause();
 
     QJsonDocument document;
-    QJsonObject json, jsonVoltage, jsonCurrent, jsonN, jsonM, jsonH;
+    QJsonObject json;
+    QVector<QJsonObject> jsonData(5);
     for (int i = 0; i < this->time.size(); i++) {
-        jsonVoltage.insert(QString::number(this->time[i]), this->V[i]);
-        jsonCurrent.insert(QString::number(this->time[i]), this->I[i]);
-        jsonN.insert(QString::number(this->time[i]), this->n[i]);
-        jsonM.insert(QString::number(this->time[i]), this->m[i]);
-        jsonH.insert(QString::number(this->time[i]), this->h[i]);
+        for (int j = 0; j < jsonData.size(); j++) {
+            jsonData[j].insert(QString::number(this->time[i]), this->values[j]->at(i));
+        }
     }
-    json.insert("h", jsonH);
-    json.insert("m", jsonM);
-    json.insert("n", jsonN);
-    json.insert("voltage", jsonVoltage);
-    json.insert("current", jsonCurrent);
+
+    QList<QString> sections;
+    sections << "voltage" << "current" << "n" << "m" << "h";
+    int i = 0;
+    foreach (QString section, sections) {
+        json.insert(section, jsonData[i]);
+        i++;
+    }
 
     document.setObject(json);
     QByteArray bytes = document.toJson();
@@ -561,16 +563,11 @@ void MainWindow::toXml()
     stream.writeStartDocument();
 
     QList<QString> sections;
-    sections.append("voltage");
-    sections.append("current");
-    sections.append("n");
-    sections.append("m");
-    sections.append("h");
+    sections << "voltage" << "current" << "n" << "m" << "h";
     int j = 0;
     foreach (QString section, sections) {
         stream.writeStartElement(section);
         for (int i = 0; i < this->time.size(); i++) {
-            //stream.writeTextElement(QString::number(this->time[i]), QString::number(this->values[j]->at(i)));
             stream.writeEmptyElement("value");
             stream.writeAttribute("time", QString::number(this->time[i]));
             stream.writeAttribute(section, QString::number(this->values[j]->at(i)));
