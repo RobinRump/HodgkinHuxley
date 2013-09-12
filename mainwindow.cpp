@@ -78,9 +78,9 @@ MainWindow::MainWindow(QWidget *parent) :
     this->values.resize(5);
     this->values[0] = &this->V;
     this->values[1] = &this->I;
-    this->values[2] = &this->nh;
-    this->values[3] = &this->mh;
-    this->values[4] = &this->hh;
+    this->values[2] = &this->n;
+    this->values[3] = &this->m;
+    this->values[4] = &this->h;
 
     // plot config
     ui->plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
@@ -196,15 +196,12 @@ void MainWindow::init()
     this->V[0] = this->VRest;
 
     // init gating variables
-    this->n = this->alphaN(V[0])/(this->alphaN(V[0]) + this->betaN(V[0]));
-    this->m = this->alphaM(V[0])/(this->alphaM(V[0]) + this->betaM(V[0]));
-    this->h = this->alphaH(V[0])/(this->alphaH(V[0]) + this->betaH(V[0]));
-    this->nh.resize(this->j+1);
-    this->nh[0] = this->n;
-    this->mh.resize(this->j+1);
-    this->mh[0] = this->m;
-    this->hh.resize(this->j+1);
-    this->hh[0] = this->h;
+    this->n.resize(this->j+1);
+    this->m.resize(this->j+1);
+    this->h.resize(this->j+1);
+    this->n[0] = this->alphaN(V[0])/(this->alphaN(V[0]) + this->betaN(V[0]));
+    this->m[0] = this->alphaM(V[0])/(this->alphaM(V[0]) + this->betaM(V[0]));
+    this->h[0] = this->alphaH(V[0])/(this->alphaH(V[0]) + this->betaH(V[0]));
 
     // init current
     this->I.resize(this->j+1); // mA
@@ -222,9 +219,9 @@ void MainWindow::updatePlot()
     this->time.resize(this->j+1);
     this->V.resize(this->j+1);
     this->I.resize(this->j+1);
-    this->nh.resize(this->j+1);
-    this->mh.resize(this->j+1);
-    this->hh.resize(this->j+1);
+    this->n.resize(this->j+1);
+    this->m.resize(this->j+1);
+    this->h.resize(this->j+1);
 
     // check whether impulse has expired
     if (this->cMode == currentImpulse) {
@@ -237,17 +234,14 @@ void MainWindow::updatePlot()
     this->time[j] = this->dt*j;
     this->I[j] = this->cI;
 
-    this->gNa = this->gMaxNa * pow(this->m, 3) * this->h;
-    this->gK  = this->gMaxK  * pow(this->n, 4);
+    // !!!!!!!!
+    this->gNa = this->gMaxNa * pow(this->m[j-1], 3) * this->h[j-1];
+    this->gK  = this->gMaxK  * pow(this->n[j-1], 4);
     this->gL  = this->gMaxL;
 
-    this->n += (this->alphaN(this->V[j-1]) * (1-this->n) - this->betaN(this->V[j-1]) * this->n) * this->dt;
-    this->m += (this->alphaM(this->V[j-1]) * (1-this->m) - this->betaM(this->V[j-1]) * this->m) * this->dt;
-    this->h += (this->alphaH(this->V[j-1]) * (1-this->h) - this->betaH(this->V[j-1]) * this->h) * this->dt;
-
-    this->nh[j] = n;
-    this->mh[j] = m;
-    this->hh[j] = h;
+    this->n[j] = this->n[j-1] + (this->alphaN(this->V[j-1]) * (1-this->n[j-1]) - this->betaN(this->V[j-1]) * this->n[j-1]) * this->dt;
+    this->m[j] = this->m[j-1] + (this->alphaM(this->V[j-1]) * (1-this->m[j-1]) - this->betaM(this->V[j-1]) * this->m[j-1]) * this->dt;
+    this->h[j] = this->h[j-1] + (this->alphaH(this->V[j-1]) * (1-this->h[j-1]) - this->betaH(this->V[j-1]) * this->h[j-1]) * this->dt;
 
     this->V[j] = this->V[j-1] + (this->I[j-1]
                - this->gNa * (this->V[j-1] - this->ENa)
@@ -258,9 +252,9 @@ void MainWindow::updatePlot()
     // replot
     ui->plot->graph(graphMembrane)->setData(this->time, this->V);
     ui->plot->graph(graphCurrent)->setData(this->time, this->I);
-    if (this->isNShown) { ui->plot->graph(graphN)->setData(this->time, this->nh); }
-    if (this->isMShown) { ui->plot->graph(graphM)->setData(this->time, this->mh); }
-    if (this->isHShown) { ui->plot->graph(graphH)->setData(this->time, this->hh); }
+    if (this->isNShown) { ui->plot->graph(graphN)->setData(this->time, this->n); }
+    if (this->isMShown) { ui->plot->graph(graphM)->setData(this->time, this->m); }
+    if (this->isHShown) { ui->plot->graph(graphH)->setData(this->time, this->h); }
     ui->plot->replot();
 
     this->j++;
@@ -337,7 +331,7 @@ void MainWindow::showN()
 {
     if (ui->checkN->isChecked() == true) {
         this->isNShown = true;
-        ui->plot->graph(graphN)->setData(this->time, this->nh);
+        ui->plot->graph(graphN)->setData(this->time, this->n);
         ui->plot->replot();
     } else {
         this->isNShown = false;
@@ -349,7 +343,7 @@ void MainWindow::showM()
 {
     if (ui->checkM->isChecked() == true) {
         this->isMShown = true;
-        ui->plot->graph(graphM)->setData(this->time, this->mh);
+        ui->plot->graph(graphM)->setData(this->time, this->m);
         ui->plot->replot();
     } else {
         this->isMShown = false;
@@ -361,7 +355,7 @@ void MainWindow::showH()
 {
     if (ui->checkH->isChecked() == true) {
         this->isHShown = true;
-        ui->plot->graph(graphH)->setData(this->time, this->hh);
+        ui->plot->graph(graphH)->setData(this->time, this->h);
         ui->plot->replot();
     } else {
         this->isHShown = false;
@@ -534,9 +528,9 @@ void MainWindow::toJson()
     for (int i = 0; i < this->time.size(); i++) {
         jsonVoltage.insert(QString::number(this->time[i]), this->V[i]);
         jsonCurrent.insert(QString::number(this->time[i]), this->I[i]);
-        jsonN.insert(QString::number(this->time[i]), this->nh[i]);
-        jsonM.insert(QString::number(this->time[i]), this->mh[i]);
-        jsonH.insert(QString::number(this->time[i]), this->hh[i]);
+        jsonN.insert(QString::number(this->time[i]), this->n[i]);
+        jsonM.insert(QString::number(this->time[i]), this->m[i]);
+        jsonH.insert(QString::number(this->time[i]), this->h[i]);
     }
     json.insert("h", jsonH);
     json.insert("m", jsonM);

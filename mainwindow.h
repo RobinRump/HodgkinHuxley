@@ -98,9 +98,7 @@ private:
 
     double VRest, Cm, gMaxNa, gMaxK, gMaxL, gNa, gK, gL, ENa, EK, EL;
     QVector<double> time, V, I, blank;
-    double m, n, h;
-
-    QVector<double> mh, nh, hh;
+    QVector<double> n, m, h;
 
     int cI, cMode;
     int impulseDuration, impulseStart;
