@@ -49,7 +49,7 @@ Settings::Settings(QWidget *parent) :
 
     // connect ui elements with slots
     connect(ui->buttonBox, SIGNAL(accepted()), this->parent(), SLOT(updatePreferences()));
-    connect(ui->buttonBox, SIGNAL(rejected()), this->parent(), SLOT(pause()));
+    connect(ui->buttonBox, SIGNAL(rejected()), this->parent(), SLOT(loadPauseState()));
 
     QVector<QSignalMapper*> signalMapper;
     signalMapper.resize(5);
