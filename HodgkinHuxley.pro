@@ -15,17 +15,17 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     qcustomplot.cpp \
-    settings.cpp \
-    welcome.cpp
+    welcome.cpp \
+    preferences.cpp
 
 HEADERS  += mainwindow.h \
     qcustomplot.h \
-    settings.h \
-    welcome.h
+    welcome.h \
+    preferences.h
 
 FORMS    += mainwindow.ui \
-    settings.ui \
-    welcome.ui
+    welcome.ui \
+    preferences.ui
 
 OTHER_FILES += \
     README.md \

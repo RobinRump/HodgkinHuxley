@@ -71,7 +71,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->init();
 
     // init windows
-    this->s = new Settings(this);
+    this->p = new Preferences(this);
     this->w = new Welcome(this);
 
     // define the pointers
@@ -162,7 +162,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->reset, SIGNAL(clicked(bool)), this, SLOT(reset()));
     connect(ui->clear, SIGNAL(clicked(bool)), this, SLOT(clear()));
 
-    connect(ui->actionSettings, SIGNAL(triggered(bool)), this, SLOT(settings()));
+    connect(ui->actionSettings, SIGNAL(triggered(bool)), this, SLOT(showPreferences()));
     connect(ui->actionAbout, SIGNAL(triggered(bool)), this, SLOT(about()));
     connect(ui->actionJson, SIGNAL(triggered(bool)), this, SLOT(toJson()));
     connect(ui->actionXml, SIGNAL(triggered(bool)), this, SLOT(toXml()));
@@ -468,46 +468,46 @@ void MainWindow::clear()
     ui->plot->replot();
 }
 
-void MainWindow::settings()
+void MainWindow::showPreferences()
 {
     this->savePauseState();
     this->pause();
 
-    this->s->setMinCurrent(ui->currentSlider->minimum());
-    this->s->setMaxCurrent(ui->currentSlider->maximum());
-    this->s->setMinGNa(ui->gNaSlider->minimum());
-    this->s->setMaxGNa(ui->gNaSlider->maximum());
-    this->s->setMinGK(ui->gKSlider->minimum());
-    this->s->setMaxGK(ui->gKSlider->maximum());
-    this->s->setMinGL(ui->gLSlider->minimum());
-    this->s->setMaxGL(ui->gLSlider->maximum());
+    this->p->setMinCurrent(ui->currentSlider->minimum());
+    this->p->setMaxCurrent(ui->currentSlider->maximum());
+    this->p->setMinGNa(ui->gNaSlider->minimum());
+    this->p->setMaxGNa(ui->gNaSlider->maximum());
+    this->p->setMinGK(ui->gKSlider->minimum());
+    this->p->setMaxGK(ui->gKSlider->maximum());
+    this->p->setMinGL(ui->gLSlider->minimum());
+    this->p->setMaxGL(ui->gLSlider->maximum());
     QVector<QColor> colors(5);
     colors[0] = ui->plot->graph(0)->pen().color();
     colors[1] = ui->plot->graph(1)->pen().color();
     colors[2] = ui->plot->graph(2)->pen().color();
     colors[3] = ui->plot->graph(3)->pen().color();
     colors[4] = ui->plot->graph(4)->pen().color();
-    this->s->setColors(colors);
-    this->s->show();
+    this->p->setColors(colors);
+    this->p->show();
 }
 
 void MainWindow::updatePreferences()
 {
-    if (this->s->getMinCurrent() > this->s->getMaxCurrent() ||
-        this->s->getMinGNa()     > this->s->getMaxGNa()     ||
-        this->s->getMinGK()      > this->s->getMaxGK()      ||
-        this->s->getMinGL()      > this->s->getMaxGL())     {
+    if (this->p->getMinCurrent() > this->p->getMaxCurrent() ||
+        this->p->getMinGNa()     > this->p->getMaxGNa()     ||
+        this->p->getMinGK()      > this->p->getMaxGK()      ||
+        this->p->getMinGL()      > this->p->getMaxGL())     {
         QMessageBox::warning(this, "Warning", "The minimum values must not be bigger than the maxiumum values!");
     } else {
-        ui->currentSlider->setMinimum(this->s->getMinCurrent());
-        ui->currentSlider->setMaximum(this->s->getMaxCurrent());
-        ui->gNaSlider->setMinimum(this->s->getMinGNa());
-        ui->gNaSlider->setMaximum(this->s->getMaxGNa());
-        ui->gKSlider->setMinimum(this->s->getMinGK());
-        ui->gKSlider->setMaximum(this->s->getMaxGK());
-        ui->gLSlider->setMinimum(this->s->getMinGL());
-        ui->gLSlider->setMaximum(this->s->getMaxGL());
-        QVector<QColor> colors = this->s->getColors();
+        ui->currentSlider->setMinimum(this->p->getMinCurrent());
+        ui->currentSlider->setMaximum(this->p->getMaxCurrent());
+        ui->gNaSlider->setMinimum(this->p->getMinGNa());
+        ui->gNaSlider->setMaximum(this->p->getMaxGNa());
+        ui->gKSlider->setMinimum(this->p->getMinGK());
+        ui->gKSlider->setMaximum(this->p->getMaxGK());
+        ui->gLSlider->setMinimum(this->p->getMinGL());
+        ui->gLSlider->setMaximum(this->p->getMaxGL());
+        QVector<QColor> colors = this->p->getColors();
         for (int i = 0; i<5; i++) {
             ui->plot->graph(i)->setPen(QPen(colors[i]));
         }

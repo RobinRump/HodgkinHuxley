@@ -27,7 +27,7 @@
 #define MAINWINDOW_H
 
 #include "qcustomplot.h"
-#include "settings.h"
+#include "preferences.h"
 #include "welcome.h"
 
 #include <QByteArray>
@@ -102,7 +102,7 @@ private:
     bool isNShown, isMShown, isHShown;
 
     QTimer *timer;
-    Settings *s;
+    Preferences *p;
     Welcome *w;
 
     QFile *config;
@@ -141,7 +141,7 @@ private slots:
     void clear();
     void changeCurrentMode(int m);
 
-    void settings();
+    void showPreferences();
     void about();
     void welcome();
 
