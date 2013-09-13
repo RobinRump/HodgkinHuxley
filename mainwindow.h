@@ -75,18 +75,11 @@ public:
         graphH        = 4
     };
 
-    enum Files {
-        fileXml  = 0,
-        fileJson = 1,
-        filePng  = 2,
-        fileJpg  = 3,
-        filePdf  = 4
-    };
-
     void init();
 
     QJsonObject fromConfig();
     bool toConfig(QJsonObject j);
+    QJsonValue preference(QString key);
 
     void resizeEvent(QResizeEvent* event);
 
@@ -113,6 +106,8 @@ private:
     Welcome *w;
 
     QFile *config;
+
+    QJsonObject pref;
 
     QVector<QVector <double> *> values;
 

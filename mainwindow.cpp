@@ -134,9 +134,12 @@ MainWindow::MainWindow(QWidget *parent) :
     QJsonObject json;
     if (this->config->exists()) {
         json = this->fromConfig();
+        this->pref = json.value("settings").toObject();
     } else {
+        QJsonObject p;
+        p.insert("startup", true);
+        json.insert("preferences", p);
         json.insert("version", 106);
-        json.insert("startup", true);
         this->toConfig(json);
     }
 
@@ -301,6 +304,11 @@ bool MainWindow::toConfig(QJsonObject j)
     this->config->write(bytes);
     this->config->close();
     return true;
+}
+
+QJsonValue MainWindow::preference(QString key)
+{
+    return this->pref.value(key);
 }
 
 void MainWindow::updateCurrent()
