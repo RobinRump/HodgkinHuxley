@@ -32,7 +32,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    this->setWindowTitle("HodgkinHuxley Simulator 1.0.6 - Robin Rump");
+    this->setWindowTitle("HodgkinHuxley Simulator 1.0.7 - Robin Rump");
     this->setMinimumWidth(800);
     this->setMinimumHeight(630);
 
@@ -71,16 +71,16 @@ MainWindow::MainWindow(QWidget *parent) :
     this->init();
 
     // init windows
-    this->s = new Settings(this);
+    this->p = new Preferences(this);
     this->w = new Welcome(this);
 
     // define the pointers
     this->values.resize(5);
     this->values[0] = &this->V;
     this->values[1] = &this->I;
-    this->values[2] = &this->nh;
-    this->values[3] = &this->mh;
-    this->values[4] = &this->hh;
+    this->values[2] = &this->n;
+    this->values[3] = &this->m;
+    this->values[4] = &this->h;
 
     // plot config
     ui->plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
@@ -134,9 +134,12 @@ MainWindow::MainWindow(QWidget *parent) :
     QJsonObject json;
     if (this->config->exists()) {
         json = this->fromConfig();
+        this->pref = json.value("settings").toObject();
     } else {
-        json.insert("version", 106);
-        json.insert("startup", true);
+        QJsonObject p;
+        p.insert("startup", true);
+        json.insert("preferences", p);
+        json.insert("version", 107);
         this->toConfig(json);
     }
 
@@ -159,7 +162,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->reset, SIGNAL(clicked(bool)), this, SLOT(reset()));
     connect(ui->clear, SIGNAL(clicked(bool)), this, SLOT(clear()));
 
-    connect(ui->actionSettings, SIGNAL(triggered(bool)), this, SLOT(settings()));
+    connect(ui->actionSettings, SIGNAL(triggered(bool)), this, SLOT(showPreferences()));
     connect(ui->actionAbout, SIGNAL(triggered(bool)), this, SLOT(about()));
     connect(ui->actionJson, SIGNAL(triggered(bool)), this, SLOT(toJson()));
     connect(ui->actionXml, SIGNAL(triggered(bool)), this, SLOT(toXml()));
@@ -196,15 +199,12 @@ void MainWindow::init()
     this->V[0] = this->VRest;
 
     // init gating variables
-    this->n = this->alphaN(V[0])/(this->alphaN(V[0]) + this->betaN(V[0]));
-    this->m = this->alphaM(V[0])/(this->alphaM(V[0]) + this->betaM(V[0]));
-    this->h = this->alphaH(V[0])/(this->alphaH(V[0]) + this->betaH(V[0]));
-    this->nh.resize(this->j+1);
-    this->nh[0] = this->n;
-    this->mh.resize(this->j+1);
-    this->mh[0] = this->m;
-    this->hh.resize(this->j+1);
-    this->hh[0] = this->h;
+    this->n.resize(this->j+1);
+    this->m.resize(this->j+1);
+    this->h.resize(this->j+1);
+    this->n[0] = this->alphaN(V[0])/(this->alphaN(V[0]) + this->betaN(V[0]));
+    this->m[0] = this->alphaM(V[0])/(this->alphaM(V[0]) + this->betaM(V[0]));
+    this->h[0] = this->alphaH(V[0])/(this->alphaH(V[0]) + this->betaH(V[0]));
 
     // init current
     this->I.resize(this->j+1); // mA
@@ -222,9 +222,9 @@ void MainWindow::updatePlot()
     this->time.resize(this->j+1);
     this->V.resize(this->j+1);
     this->I.resize(this->j+1);
-    this->nh.resize(this->j+1);
-    this->mh.resize(this->j+1);
-    this->hh.resize(this->j+1);
+    this->n.resize(this->j+1);
+    this->m.resize(this->j+1);
+    this->h.resize(this->j+1);
 
     // check whether impulse has expired
     if (this->cMode == currentImpulse) {
@@ -237,17 +237,14 @@ void MainWindow::updatePlot()
     this->time[j] = this->dt*j;
     this->I[j] = this->cI;
 
-    this->gNa = this->gMaxNa * pow(this->m, 3) * this->h;
-    this->gK  = this->gMaxK  * pow(this->n, 4);
+    // !!!!!!!!
+    this->gNa = this->gMaxNa * pow(this->m[j-1], 3) * this->h[j-1];
+    this->gK  = this->gMaxK  * pow(this->n[j-1], 4);
     this->gL  = this->gMaxL;
 
-    this->n += (this->alphaN(this->V[j-1]) * (1-this->n) - this->betaN(this->V[j-1]) * this->n) * this->dt;
-    this->m += (this->alphaM(this->V[j-1]) * (1-this->m) - this->betaM(this->V[j-1]) * this->m) * this->dt;
-    this->h += (this->alphaH(this->V[j-1]) * (1-this->h) - this->betaH(this->V[j-1]) * this->h) * this->dt;
-
-    this->nh[j] = n;
-    this->mh[j] = m;
-    this->hh[j] = h;
+    this->n[j] = this->n[j-1] + (this->alphaN(this->V[j-1]) * (1-this->n[j-1]) - this->betaN(this->V[j-1]) * this->n[j-1]) * this->dt;
+    this->m[j] = this->m[j-1] + (this->alphaM(this->V[j-1]) * (1-this->m[j-1]) - this->betaM(this->V[j-1]) * this->m[j-1]) * this->dt;
+    this->h[j] = this->h[j-1] + (this->alphaH(this->V[j-1]) * (1-this->h[j-1]) - this->betaH(this->V[j-1]) * this->h[j-1]) * this->dt;
 
     this->V[j] = this->V[j-1] + (this->I[j-1]
                - this->gNa * (this->V[j-1] - this->ENa)
@@ -258,9 +255,9 @@ void MainWindow::updatePlot()
     // replot
     ui->plot->graph(graphMembrane)->setData(this->time, this->V);
     ui->plot->graph(graphCurrent)->setData(this->time, this->I);
-    if (this->isNShown) { ui->plot->graph(graphN)->setData(this->time, this->nh); }
-    if (this->isMShown) { ui->plot->graph(graphM)->setData(this->time, this->mh); }
-    if (this->isHShown) { ui->plot->graph(graphH)->setData(this->time, this->hh); }
+    if (this->isNShown) { ui->plot->graph(graphN)->setData(this->time, this->n); }
+    if (this->isMShown) { ui->plot->graph(graphM)->setData(this->time, this->m); }
+    if (this->isHShown) { ui->plot->graph(graphH)->setData(this->time, this->h); }
     ui->plot->replot();
 
     this->j++;
@@ -309,6 +306,11 @@ bool MainWindow::toConfig(QJsonObject j)
     return true;
 }
 
+QJsonValue MainWindow::preference(QString key)
+{
+    return this->pref.value(key);
+}
+
 void MainWindow::updateCurrent()
 {
     this->cI = ui->currentSlider->value();
@@ -337,7 +339,7 @@ void MainWindow::showN()
 {
     if (ui->checkN->isChecked() == true) {
         this->isNShown = true;
-        ui->plot->graph(graphN)->setData(this->time, this->nh);
+        ui->plot->graph(graphN)->setData(this->time, this->n);
         ui->plot->replot();
     } else {
         this->isNShown = false;
@@ -349,7 +351,7 @@ void MainWindow::showM()
 {
     if (ui->checkM->isChecked() == true) {
         this->isMShown = true;
-        ui->plot->graph(graphM)->setData(this->time, this->mh);
+        ui->plot->graph(graphM)->setData(this->time, this->m);
         ui->plot->replot();
     } else {
         this->isMShown = false;
@@ -361,7 +363,7 @@ void MainWindow::showH()
 {
     if (ui->checkH->isChecked() == true) {
         this->isHShown = true;
-        ui->plot->graph(graphH)->setData(this->time, this->hh);
+        ui->plot->graph(graphH)->setData(this->time, this->h);
         ui->plot->replot();
     } else {
         this->isHShown = false;
@@ -410,12 +412,14 @@ void MainWindow::pause()
     this->timer->stop();
     this->isPaused = true;
     ui->pause->setText(">");
+    ui->statusBar->showMessage("Paused", 1500);
 }
 
 void MainWindow::unpause()
 {
     this->isPaused = false;
     ui->pause->setText("||");
+    ui->statusBar->showMessage("Unpaused", 1500);
     this->timer->start(10);
 }
 
@@ -464,46 +468,46 @@ void MainWindow::clear()
     ui->plot->replot();
 }
 
-void MainWindow::settings()
+void MainWindow::showPreferences()
 {
     this->savePauseState();
     this->pause();
 
-    this->s->setMinCurrent(ui->currentSlider->minimum());
-    this->s->setMaxCurrent(ui->currentSlider->maximum());
-    this->s->setMinGNa(ui->gNaSlider->minimum());
-    this->s->setMaxGNa(ui->gNaSlider->maximum());
-    this->s->setMinGK(ui->gKSlider->minimum());
-    this->s->setMaxGK(ui->gKSlider->maximum());
-    this->s->setMinGL(ui->gLSlider->minimum());
-    this->s->setMaxGL(ui->gLSlider->maximum());
+    this->p->setMinCurrent(ui->currentSlider->minimum());
+    this->p->setMaxCurrent(ui->currentSlider->maximum());
+    this->p->setMinGNa(ui->gNaSlider->minimum());
+    this->p->setMaxGNa(ui->gNaSlider->maximum());
+    this->p->setMinGK(ui->gKSlider->minimum());
+    this->p->setMaxGK(ui->gKSlider->maximum());
+    this->p->setMinGL(ui->gLSlider->minimum());
+    this->p->setMaxGL(ui->gLSlider->maximum());
     QVector<QColor> colors(5);
     colors[0] = ui->plot->graph(0)->pen().color();
     colors[1] = ui->plot->graph(1)->pen().color();
     colors[2] = ui->plot->graph(2)->pen().color();
     colors[3] = ui->plot->graph(3)->pen().color();
     colors[4] = ui->plot->graph(4)->pen().color();
-    this->s->setColors(colors);
-    this->s->show();
+    this->p->setColors(colors);
+    this->p->show();
 }
 
 void MainWindow::updatePreferences()
 {
-    if (this->s->getMinCurrent() > this->s->getMaxCurrent() ||
-        this->s->getMinGNa()     > this->s->getMaxGNa()     ||
-        this->s->getMinGK()      > this->s->getMaxGK()      ||
-        this->s->getMinGL()      > this->s->getMaxGL())     {
+    if (this->p->getMinCurrent() > this->p->getMaxCurrent() ||
+        this->p->getMinGNa()     > this->p->getMaxGNa()     ||
+        this->p->getMinGK()      > this->p->getMaxGK()      ||
+        this->p->getMinGL()      > this->p->getMaxGL())     {
         QMessageBox::warning(this, "Warning", "The minimum values must not be bigger than the maxiumum values!");
     } else {
-        ui->currentSlider->setMinimum(this->s->getMinCurrent());
-        ui->currentSlider->setMaximum(this->s->getMaxCurrent());
-        ui->gNaSlider->setMinimum(this->s->getMinGNa());
-        ui->gNaSlider->setMaximum(this->s->getMaxGNa());
-        ui->gKSlider->setMinimum(this->s->getMinGK());
-        ui->gKSlider->setMaximum(this->s->getMaxGK());
-        ui->gLSlider->setMinimum(this->s->getMinGL());
-        ui->gLSlider->setMaximum(this->s->getMaxGL());
-        QVector<QColor> colors = this->s->getColors();
+        ui->currentSlider->setMinimum(this->p->getMinCurrent());
+        ui->currentSlider->setMaximum(this->p->getMaxCurrent());
+        ui->gNaSlider->setMinimum(this->p->getMinGNa());
+        ui->gNaSlider->setMaximum(this->p->getMaxGNa());
+        ui->gKSlider->setMinimum(this->p->getMinGK());
+        ui->gKSlider->setMaximum(this->p->getMaxGK());
+        ui->gLSlider->setMinimum(this->p->getMinGL());
+        ui->gLSlider->setMaximum(this->p->getMaxGL());
+        QVector<QColor> colors = this->p->getColors();
         for (int i = 0; i<5; i++) {
             ui->plot->graph(i)->setPen(QPen(colors[i]));
         }
@@ -528,19 +532,21 @@ void MainWindow::toJson()
     this->pause();
 
     QJsonDocument document;
-    QJsonObject json, jsonVoltage, jsonCurrent, jsonN, jsonM, jsonH;
+    QJsonObject json;
+    QVector<QJsonObject> jsonData(5);
     for (int i = 0; i < this->time.size(); i++) {
-        jsonVoltage.insert(QString::number(this->time[i]), this->V[i]);
-        jsonCurrent.insert(QString::number(this->time[i]), this->I[i]);
-        jsonN.insert(QString::number(this->time[i]), this->nh[i]);
-        jsonM.insert(QString::number(this->time[i]), this->mh[i]);
-        jsonH.insert(QString::number(this->time[i]), this->hh[i]);
+        for (int j = 0; j < jsonData.size(); j++) {
+            jsonData[j].insert(QString::number(this->time[i]), this->values[j]->at(i));
+        }
     }
-    json.insert("h", jsonH);
-    json.insert("m", jsonM);
-    json.insert("n", jsonN);
-    json.insert("voltage", jsonVoltage);
-    json.insert("current", jsonCurrent);
+
+    QList<QString> sections;
+    sections << "voltage" << "current" << "n" << "m" << "h";
+    int i = 0;
+    foreach (QString section, sections) {
+        json.insert(section, jsonData[i]);
+        i++;
+    }
 
     document.setObject(json);
     QByteArray bytes = document.toJson();
@@ -565,16 +571,11 @@ void MainWindow::toXml()
     stream.writeStartDocument();
 
     QList<QString> sections;
-    sections.append("voltage");
-    sections.append("current");
-    sections.append("n");
-    sections.append("m");
-    sections.append("h");
+    sections << "voltage" << "current" << "n" << "m" << "h";
     int j = 0;
     foreach (QString section, sections) {
         stream.writeStartElement(section);
         for (int i = 0; i < this->time.size(); i++) {
-            //stream.writeTextElement(QString::number(this->time[i]), QString::number(this->values[j]->at(i)));
             stream.writeEmptyElement("value");
             stream.writeAttribute("time", QString::number(this->time[i]));
             stream.writeAttribute(section, QString::number(this->values[j]->at(i)));

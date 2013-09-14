@@ -23,12 +23,12 @@
 **          Version: 1.0.0                                                **
 ****************************************************************************/
 
-#include "settings.h"
-#include "ui_settings.h"
+#include "preferences.h"
+#include "ui_preferences.h"
 
-Settings::Settings(QWidget *parent) :
+Preferences::Preferences(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::Settings)
+    ui(new Ui::Preferences)
 {
     ui->setupUi(this);
     this->setWindowTitle("Preferences");
@@ -49,7 +49,7 @@ Settings::Settings(QWidget *parent) :
 
     // connect ui elements with slots
     connect(ui->buttonBox, SIGNAL(accepted()), this->parent(), SLOT(updatePreferences()));
-    connect(ui->buttonBox, SIGNAL(rejected()), this->parent(), SLOT(pause()));
+    connect(ui->buttonBox, SIGNAL(rejected()), this->parent(), SLOT(loadPauseState()));
 
     QVector<QSignalMapper*> signalMapper;
     signalMapper.resize(5);
@@ -61,12 +61,12 @@ Settings::Settings(QWidget *parent) :
     }
 }
 
-Settings::~Settings()
+Preferences::~Preferences()
 {
     delete ui;
 }
 
-QString Settings::toColorCode(QColor color)
+QString Preferences::toColorCode(QColor color)
 {
     QString r = QString::number(color.red(), 16);
     QString g = QString::number(color.green(), 16);
@@ -78,7 +78,7 @@ QString Settings::toColorCode(QColor color)
     return "#" + r + g + b;
 }
 
-QColor Settings::fromColorCode(QString code)
+QColor Preferences::fromColorCode(QString code)
 {
     QString r = code.mid(1, 2);
     QString g = code.mid(3, 2);
@@ -88,7 +88,7 @@ QColor Settings::fromColorCode(QString code)
 
 }
 
-QVector<QColor> Settings::getColors() {
+QVector<QColor> Preferences::getColors() {
     QVector<QColor> colors(5);
     for (int i = 0; i<5; i++) {
         colors[i] = this->fromColorCode(this->colorValues[i]->text());
@@ -97,7 +97,7 @@ QVector<QColor> Settings::getColors() {
     return colors;
 }
 
-void Settings::setColors(QVector<QColor> colors)
+void Preferences::setColors(QVector<QColor> colors)
 {
     for (int i = 0; i<5; i++) {
         this->colorButtons[i]->setStyleSheet("background-color: " + this->toColorCode(colors[i]));
@@ -105,26 +105,26 @@ void Settings::setColors(QVector<QColor> colors)
     }
 }
 
-void Settings::changeColor(int i) {
+void Preferences::changeColor(int i) {
     QColor color = QColorDialog::getColor();
     colorButtons[i]->setStyleSheet("background-color: " + this->toColorCode(color));
     colorValues[i]->setText(this->toColorCode(color));
 }
 
-int Settings::getMinCurrent() { return ui->minCurrentValue->value(); }
-int Settings::getMaxCurrent() { return ui->maxCurrentValue->value(); }
-int Settings::getMinGNa() { return ui->minGNaValue->value(); }
-int Settings::getMaxGNa() { return ui->maxGNaValue->value(); }
-int Settings::getMinGK() { return ui->minGKValue->value(); }
-int Settings::getMaxGK() { return ui->maxGKValue->value(); }
-int Settings::getMinGL() { return ui->minGLValue->value(); }
-int Settings::getMaxGL() { return ui->maxGLValue->value(); }
+int Preferences::getMinCurrent() { return ui->minCurrentValue->value(); }
+int Preferences::getMaxCurrent() { return ui->maxCurrentValue->value(); }
+int Preferences::getMinGNa() { return ui->minGNaValue->value(); }
+int Preferences::getMaxGNa() { return ui->maxGNaValue->value(); }
+int Preferences::getMinGK() { return ui->minGKValue->value(); }
+int Preferences::getMaxGK() { return ui->maxGKValue->value(); }
+int Preferences::getMinGL() { return ui->minGLValue->value(); }
+int Preferences::getMaxGL() { return ui->maxGLValue->value(); }
 
-void Settings::setMinCurrent(int v) { ui->minCurrentValue->setValue(v); }
-void Settings::setMaxCurrent(int v) { ui->maxCurrentValue->setValue(v); }
-void Settings::setMinGNa(int v) { ui->minGNaValue->setValue(v); }
-void Settings::setMaxGNa(int v) { ui->maxGNaValue->setValue(v); }
-void Settings::setMinGK(int v) { ui->minGKValue->setValue(v); }
-void Settings::setMaxGK(int v) { ui->maxGKValue->setValue(v); }
-void Settings::setMinGL(int v) { ui->minGLValue->setValue(v); }
-void Settings::setMaxGL(int v) { ui->maxGLValue->setValue(v); }
+void Preferences::setMinCurrent(int v) { ui->minCurrentValue->setValue(v); }
+void Preferences::setMaxCurrent(int v) { ui->maxCurrentValue->setValue(v); }
+void Preferences::setMinGNa(int v) { ui->minGNaValue->setValue(v); }
+void Preferences::setMaxGNa(int v) { ui->maxGNaValue->setValue(v); }
+void Preferences::setMinGK(int v) { ui->minGKValue->setValue(v); }
+void Preferences::setMaxGK(int v) { ui->maxGKValue->setValue(v); }
+void Preferences::setMinGL(int v) { ui->minGLValue->setValue(v); }
+void Preferences::setMaxGL(int v) { ui->maxGLValue->setValue(v); }

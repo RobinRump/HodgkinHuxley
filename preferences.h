@@ -23,8 +23,8 @@
 **          Version: 1.0.0                                                **
 ****************************************************************************/
 
-#ifndef SETTINGS_H
-#define SETTINGS_H
+#ifndef PREFERENCES_H
+#define PREFERENCES_H
 
 #include <QColor>
 #include <QColorDialog>
@@ -36,16 +36,16 @@
 #include <QVector>
 
 namespace Ui {
-class Settings;
+class Preferences;
 }
 
-class Settings : public QDialog
+class Preferences : public QDialog
 {
     Q_OBJECT
     
 public:
-    explicit Settings(QWidget *parent = 0);
-    ~Settings();
+    explicit Preferences(QWidget *parent = 0);
+    ~Preferences();
 
     enum Color {
         colorMembrane = 0,
@@ -81,7 +81,7 @@ public:
     void setColors(QVector<QColor> colors);
 
 private:
-    Ui::Settings *ui;
+    Ui::Preferences *ui;
 
     QVector<QToolButton *> colorButtons;
     QVector<QLineEdit *> colorValues;
@@ -90,4 +90,4 @@ private slots:
     void changeColor(int i);
 };
 
-#endif // SETTINGS_H
+#endif // PREFERENCES_H

@@ -27,7 +27,7 @@
 #define MAINWINDOW_H
 
 #include "qcustomplot.h"
-#include "settings.h"
+#include "preferences.h"
 #include "welcome.h"
 
 #include <QByteArray>
@@ -75,18 +75,11 @@ public:
         graphH        = 4
     };
 
-    enum Files {
-        fileXml  = 0,
-        fileJson = 1,
-        filePng  = 2,
-        fileJpg  = 3,
-        filePdf  = 4
-    };
-
     void init();
 
     QJsonObject fromConfig();
     bool toConfig(QJsonObject j);
+    QJsonValue preference(QString key);
 
     void resizeEvent(QResizeEvent* event);
 
@@ -98,9 +91,7 @@ private:
 
     double VRest, Cm, gMaxNa, gMaxK, gMaxL, gNa, gK, gL, ENa, EK, EL;
     QVector<double> time, V, I, blank;
-    double m, n, h;
-
-    QVector<double> mh, nh, hh;
+    QVector<double> n, m, h;
 
     int cI, cMode;
     int impulseDuration, impulseStart;
@@ -111,10 +102,12 @@ private:
     bool isNShown, isMShown, isHShown;
 
     QTimer *timer;
-    Settings *s;
+    Preferences *p;
     Welcome *w;
 
     QFile *config;
+
+    QJsonObject pref;
 
     QVector<QVector <double> *> values;
 
@@ -148,7 +141,7 @@ private slots:
     void clear();
     void changeCurrentMode(int m);
 
-    void settings();
+    void showPreferences();
     void about();
     void welcome();
 
