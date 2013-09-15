@@ -16,12 +16,14 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     qcustomplot.cpp \
     welcome.cpp \
-    preferences.cpp
+    preferences.cpp \
+    updater.cpp
 
 HEADERS  += mainwindow.h \
     qcustomplot.h \
     welcome.h \
-    preferences.h
+    preferences.h \
+    updater.h
 
 FORMS    += mainwindow.ui \
     welcome.ui \
