@@ -71,8 +71,9 @@ MainWindow::MainWindow(QWidget *parent) :
     this->init();
 
     // init windows
-    this->p = new Preferences(this);
-    this->w = new Welcome(this);
+    this->p = new Preferences();
+    this->w = new Welcome();
+    this->u = new Updater();
 
     // define the pointers
     this->values.resize(5);
@@ -514,6 +515,17 @@ void MainWindow::updatePreferences()
     }
 
     this->loadPauseState();
+}
+
+void MainWindow::update()
+{
+    this->u.append(arguments);
+
+    QEventLoop loop;
+    connect(&this->u, SIGNAL(finished()), &loop, SLOT(quit()));
+
+    loop.exec();
+
 }
 
 void MainWindow::about()

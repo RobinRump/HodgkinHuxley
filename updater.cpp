@@ -1,7 +1,7 @@
 #include "updater.h"
 
 Updater::Updater(QObject *parent) :
-    QObject(parent)
+    QObject(parent), downloadedCount(0), totalCount(0)
 {
 }
 
@@ -35,7 +35,6 @@ QString Updater::saveFileName(const QUrl &url)
         basename = "download";
 
     if (QFile::exists(basename)) {
-        // already exists, don't overwrite
         int i = 0;
         basename += '.';
         while (QFile::exists(basename + QString::number(i)))
@@ -50,7 +49,6 @@ QString Updater::saveFileName(const QUrl &url)
 void Updater::startNextDownload()
 {
     if (this->downloadQueue.isEmpty()) {
-        printf("%d/%d files downloaded successfully\n", downloadedCount, totalCount);
         emit this->finished();
         return;
     }
@@ -65,17 +63,14 @@ void Updater::startNextDownload()
                 qPrintable(this->output.errorString()));
 
         this->startNextDownload();
-        return;                 // skip this download
+        return;
     }
 
     QNetworkRequest request(url);
     this->currentDownload = this->manager.get(request);
-    connect(this->currentDownload, SIGNAL(downloadProgress(qint64,qint64)),
-            SLOT(downloadProgress(qint64,qint64)));
-    connect(this->currentDownload, SIGNAL(finished()),
-            SLOT(downloadFinished()));
-    connect(this->currentDownload, SIGNAL(readyRead()),
-            SLOT(downloadReadyRead()));
+    connect(this->currentDownload, SIGNAL(downloadProgress(qint64,qint64)), SLOT(downloadProgress(qint64,qint64)));
+    connect(this->currentDownload, SIGNAL(finished()), SLOT(downloadFinished()));
+    connect(this->currentDownload, SIGNAL(readyRead()), SLOT(downloadReadyRead()));
 
     // prepare the output
     printf("Downloading %s...\n", url.toEncoded().constData());

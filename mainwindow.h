@@ -29,10 +29,12 @@
 #include "qcustomplot.h"
 #include "preferences.h"
 #include "welcome.h"
+#include "updater.h"
 
 #include <QByteArray>
 #include <QDataStream>
 #include <QDateTime>
+#include <QEventLoop>
 #include <QFile>
 #include <QFileDialog>
 #include <QInputDialog>
@@ -104,6 +106,7 @@ private:
     QTimer *timer;
     Preferences *p;
     Welcome *w;
+    Updater *u;
 
     QFile *config;
 
@@ -144,6 +147,8 @@ private slots:
     void showPreferences();
     void about();
     void welcome();
+
+    void update();
 
     void toJson();
     void toXml();
