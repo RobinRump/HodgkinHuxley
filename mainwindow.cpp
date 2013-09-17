@@ -28,8 +28,8 @@
 #include "qcustomplot.h"
 
 MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    QMainWindow(parent), ui(new Ui::MainWindow),
+    p(new Preferences), w(new Welcome)
 {
     ui->setupUi(this);
     this->setWindowTitle("HodgkinHuxley Simulator 1.0.7 - Robin Rump");
@@ -69,10 +69,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // prepare simulator
     this->init();
-
-    // init windows
-    this->p = new Preferences(this);
-    this->w = new Welcome(this);
 
     // define the pointers
     this->values.resize(5);
