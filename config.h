@@ -1,7 +1,13 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+#include <QDir>
+#include <QFile>
+#include <QJsonObject>
+#include <QJsonDocument>
 #include <QObject>
+#include <QStandardPaths>
+#include <QString>
 
 class Config : public QObject
 {
@@ -12,6 +18,14 @@ public:
 signals:
 
 public slots:
+
+private:
+    QFile *file;
+
+    QJsonObject config;
+    QJsonObject preferences;
+
+
 
 };
 

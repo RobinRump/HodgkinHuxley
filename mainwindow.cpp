@@ -29,7 +29,7 @@
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent), ui(new Ui::MainWindow),
-    p(new Preferences), w(new Welcome)
+    p(new Preferences), w(new Welcome), c(new Config)
 {
     ui->setupUi(this);
     this->setWindowTitle("HodgkinHuxley Simulator 1.0.7 - Robin Rump");
@@ -38,7 +38,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // setup variables and sliders
     this->timer = new QTimer(this);
-    this->config = new QFile(QDir::toNativeSeparators(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + "/com.robinrump.hodgkinhuxley.json"));
 
     this->blank.resize(1);
     this->dt       = 0.025;  // ms
@@ -127,17 +126,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->plot->replot();
 
     // config
-    QJsonObject json;
-    if (this->config->exists()) {
-        json = this->fromConfig();
-        this->pref = json.value("settings").toObject();
-    } else {
-        QJsonObject p;
-        p.insert("startup", true);
-        json.insert("preferences", p);
-        json.insert("version", 107);
-        this->toConfig(json);
-    }
+
 
     // connect ui elements with slots
     connect(ui->currentSlider, SIGNAL(valueChanged(int)), this, SLOT(updateCurrent()));
@@ -275,36 +264,6 @@ void MainWindow::contextMenuRequest(QPoint pos)
     menu->addSeparator();
     menu->addAction("Settings", this, SLOT(settings()));
     menu->popup(ui->plot->mapToGlobal(pos));
-}
-
-QJsonObject MainWindow::fromConfig()
-{
-    QJsonDocument document;
-    QByteArray bytes;
-    if (!this->config->open(QIODevice::ReadOnly | QIODevice::Text)) {
-        return QJsonObject();
-    }
-    bytes = this->config->readAll();
-    this->config->close();
-    document = QJsonDocument::fromJson(bytes);
-    return document.object();
-}
-
-bool MainWindow::toConfig(QJsonObject j)
-{
-    QJsonDocument document(j);
-    QByteArray bytes = document.toJson();
-    if (!this->config->open(QIODevice::WriteOnly | QIODevice::Text)) {
-        return false;
-    }
-    this->config->write(bytes);
-    this->config->close();
-    return true;
-}
-
-QJsonValue MainWindow::preference(QString key)
-{
-    return this->pref.value(key);
 }
 
 void MainWindow::updateCurrent()
