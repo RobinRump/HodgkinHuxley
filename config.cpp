@@ -7,38 +7,33 @@ Config::Config(QObject *parent) :
 
     QJsonObject json;
     if (this->file->exists()) {
-        json = this->fromConfig();
-        this->pref = json.value("settings").toObject();
+        QJsonDocument document;
+        QByteArray bytes;
+        if (!this->file->open(QIODevice::ReadOnly | QIODevice::Text)) {
+            this->config = QJsonObject();
+            return;
+        }
+        bytes = this->file->readAll();
+        this->file->close();
+        document = QJsonDocument::fromJson(bytes);
+        this->config = document.object();
+        this->preferences = config.value("preferences").toObject();
     } else {
-        QJsonObject p;
-        p.insert("startup", true);
-        json.insert("preferences", p);
-        json.insert("version", 107);
-        this->toConfig(json);
+        this->preferences.insert("startup", true);
+        this->config.insert("preferences", this->preferences);
+        this->config.insert("version", 107);
+        this->write();
     }
 }
 
-QJsonObject MainWindow::fromConfig()
+bool Config::write()
 {
-    QJsonDocument document;
-    QByteArray bytes;
-    if (!this->config->open(QIODevice::ReadOnly | QIODevice::Text)) {
-        return QJsonObject();
-    }
-    bytes = this->config->readAll();
-    this->config->close();
-    document = QJsonDocument::fromJson(bytes);
-    return document.object();
-}
-
-bool MainWindow::toConfig(QJsonObject j)
-{
-    QJsonDocument document(j);
+    QJsonDocument document(this->config);
     QByteArray bytes = document.toJson();
-    if (!this->config->open(QIODevice::WriteOnly | QIODevice::Text)) {
+    if (!this->file->open(QIODevice::WriteOnly | QIODevice::Text)) {
         return false;
     }
-    this->config->write(bytes);
-    this->config->close();
+    this->file->write(bytes);
+    this->file->close();
     return true;
 }

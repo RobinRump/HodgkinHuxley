@@ -28,13 +28,17 @@
 #include "qcustomplot.h"
 
 MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent), ui(new Ui::MainWindow),
-    p(new Preferences), w(new Welcome), c(new Config)
+    QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
     this->setWindowTitle("HodgkinHuxley Simulator 1.0.7 - Robin Rump");
     this->setMinimumWidth(800);
     this->setMinimumHeight(630);
+
+    // setup windows and config
+    this->p = new Preferences(this);
+    this->w = new Welcome(this);
+    this->config = new Config();
 
     // setup variables and sliders
     this->timer = new QTimer(this);
@@ -125,9 +129,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->plot->yAxis2->setRange(0, 1);
     ui->plot->replot();
 
-    // config
-
-
     // connect ui elements with slots
     connect(ui->currentSlider, SIGNAL(valueChanged(int)), this, SLOT(updateCurrent()));
     connect(ui->gNaSlider, SIGNAL(valueChanged(int)), this, SLOT(updateGNa()));
@@ -170,6 +171,7 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+    this->config->write();
 }
 
 void MainWindow::init()

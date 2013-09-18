@@ -18,6 +18,7 @@ public:
 signals:
 
 public slots:
+    bool write();
 
 private:
     QFile *file;
@@ -25,6 +26,7 @@ private:
     QJsonObject config;
     QJsonObject preferences;
 
+private slots:
 
 
 };
