@@ -29,6 +29,7 @@
 #include "qcustomplot.h"
 #include "preferences.h"
 #include "welcome.h"
+#include "config.h"
 
 #include <QByteArray>
 #include <QDataStream>
@@ -77,10 +78,6 @@ public:
 
     void init();
 
-    QJsonObject fromConfig();
-    bool toConfig(QJsonObject j);
-    QJsonValue preference(QString key);
-
     void resizeEvent(QResizeEvent* event);
 
 private:
@@ -105,7 +102,7 @@ private:
     Preferences *p;
     Welcome *w;
 
-    QFile *config;
+    Config *config;
 
     QJsonObject pref;
 
