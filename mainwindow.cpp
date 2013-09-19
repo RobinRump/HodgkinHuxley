@@ -163,8 +163,14 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->plot->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(ui->plot, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuRequest(QPoint)));
 
-    // connect and start timer
+    // connect timer
     connect(this->timer, SIGNAL(timeout()), this, SLOT(updatePlot()));
+
+    if (this->config->startup() == true) {
+        this->welcome();
+    }
+
+    // start timer
     this->timer->start(this->interval);
 }
 

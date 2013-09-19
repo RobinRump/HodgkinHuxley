@@ -23,7 +23,7 @@ Config::Config(QObject *parent) :
             return;
         }
     }
-    this->preferences.insert("startup", true);
+    this->preferences.insert("startup", false);
     this->config.insert("preferences", this->preferences);
     this->config.insert("version", 107);
     this->write();
