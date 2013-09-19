@@ -16,14 +16,17 @@ Config::Config(QObject *parent) :
         bytes = this->file->readAll();
         this->file->close();
         document = QJsonDocument::fromJson(bytes);
-        this->config = document.object();
-        this->preferences = config.value("preferences").toObject();
-    } else {
-        this->preferences.insert("startup", true);
-        this->config.insert("preferences", this->preferences);
-        this->config.insert("version", 107);
-        this->write();
+        if (document.isNull() == false) {
+            this->config = document.object();
+            this->preferences = config.value("preferences").toObject();
+
+            return;
+        }
     }
+    this->preferences.insert("startup", true);
+    this->config.insert("preferences", this->preferences);
+    this->config.insert("version", 107);
+    this->write();
 }
 
 bool Config::write()
