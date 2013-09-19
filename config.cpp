@@ -28,6 +28,8 @@ Config::Config(QObject *parent) :
 
 bool Config::write()
 {
+    this->config.remove("preferences");
+    this->config.insert("preferences", this->preferences);
     QJsonDocument document(this->config);
     QByteArray bytes = document.toJson();
     if (!this->file->open(QIODevice::WriteOnly | QIODevice::Text)) {
@@ -36,4 +38,25 @@ bool Config::write()
     this->file->write(bytes);
     this->file->close();
     return true;
+}
+
+int Config::version() {
+    return (int) this->config.value("version").toDouble();
+}
+
+void Config::setVersion(int version)
+{
+    this->config.remove("version");
+    this->config.insert("version", version);
+}
+
+bool Config::startup()
+{
+    return this->preferences.value("startup").toBool();
+}
+
+void Config::setStartup(bool startup)
+{
+    this->config.remove("startup");
+    this->config.insert("startup", startup);
 }
