@@ -39,6 +39,9 @@ Welcome::Welcome(QWidget *parent) :
     this->scene->addItem(this->items);
     this->items->addToGroup(this->scene->addPixmap(QPixmap(":/resources/controls.png")));
 
+    QGraphicsRectItem controlsPage(0, 0, this->scene->width(), this->scene->height());
+    QGraphicsPixmapItem controls(this->scene->addPixmap(QPixmap(":/resources/controls.png")), controlsPage);
+
     ui->graphicsView->setScene(this->scene);
 
 
