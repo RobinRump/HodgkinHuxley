@@ -45,8 +45,8 @@ Welcome::Welcome(QWidget *parent) :
     QGraphicsPixmapItem controls(QPixmap(":/resources/controls.png"));
     controls.setParentItem(&controlsPage);
 
-    this->items->addToGroup(&sliderPage);
-    this->items->addToGroup(&controlsPage);
+    this->items->addToGroup(new QGraphicsPixmapItem(QPixmap(":/resources/slider.png")));
+    this->items->addToGroup(new QGraphicsPixmapItem(QPixmap(":/resources/controls.png")));
     this->scene->addItem(this->items);
 
     ui->graphicsView->setScene(this->scene);
