@@ -33,6 +33,8 @@
 #include <QGraphicsItemGroup>
 #include <QGraphicsScene>
 #include <QPixmap>
+#include <QPointF>
+#include <QPropertyAnimation>
 
 namespace Ui {
 class Welcome;

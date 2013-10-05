@@ -63,7 +63,13 @@ Welcome::~Welcome()
 
 void Welcome::slideLeft()
 {
-    this->items->childItems().at(0)->moveBy(20,30);
+    QGraphicsItem *item = this->items->childItems().at(0);
+    QPropertyAnimation animation(item, "pos");
+    animation.setDuration(3000);
+    animation.setStartValue(this->items->childItems().at(0)->pos());
+    animation.setEndValue(QPointF(this->items->childItems().at(0)->pos().x()+50, this->items->childItems().at(0)->pos().y()+50));
+    animation.setEasingCurve(QEasingCurve::OutBounce);
+    animation.start();
 }
 
 void Welcome::slideRight()
