@@ -45,6 +45,9 @@ class Welcome : public QDialog
 public:
     explicit Welcome(QWidget *parent = 0);
     ~Welcome();
+
+    void slideLeft();
+    void slideRight();
     
 private:
     Ui::Welcome *ui;

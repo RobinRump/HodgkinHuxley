@@ -55,9 +55,15 @@ Welcome::Welcome(QWidget *parent) :
 
     // connect ui elements with slots
     connect(ui->closeButton, SIGNAL(clicked(bool)), this, SLOT(close()));
+    connect(ui->leftButton, SIGNAL(clicked(bool)), this, SLOT(slideLeft()));
 }
 
 Welcome::~Welcome()
 {
     delete ui;
+}
+
+void Welcome::slideLeft()
+{
+    this->items->childItems().at(0)->moveBy(20,30);
 }
