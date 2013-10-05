@@ -45,14 +45,15 @@ class Welcome : public QDialog
 public:
     explicit Welcome(QWidget *parent = 0);
     ~Welcome();
-
-    void slideLeft();
-    void slideRight();
     
 private:
     Ui::Welcome *ui;
     QGraphicsScene *scene;
     QGraphicsItemGroup *items;
+
+public slots:
+    void slideLeft();
+    void slideRight();
 };
 
 #endif // WELCOME_H
