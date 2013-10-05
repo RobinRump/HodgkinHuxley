@@ -51,11 +51,9 @@ Welcome::Welcome(QWidget *parent) :
 
     ui->graphicsView->setScene(this->scene);
 
-
-
     // connect ui elements with slots
     connect(ui->closeButton, SIGNAL(clicked(bool)), this, SLOT(close()));
-    connect(ui->leftButton, SIGNAL(clicked(bool)), this, SLOT());
+    connect(ui->leftButton, SIGNAL(clicked(bool)), this, SLOT(slideLeft()));
 }
 
 Welcome::~Welcome()
