@@ -67,3 +67,8 @@ void Welcome::slideLeft()
 {
     this->items->childItems().at(0)->moveBy(20,30);
 }
+
+void Welcome::slideRight()
+{
+
+}
