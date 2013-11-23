@@ -25,7 +25,7 @@ Config::Config(QObject *parent) :
     }
     this->preferences.insert("startup", false);
     this->config.insert("preferences", this->preferences);
-    this->config.insert("version", 107);
+    this->config.insert("version", 108);
     this->write();
 }
 

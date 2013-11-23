@@ -20,7 +20,7 @@
 **           Author: Robin Rump                                           **
 **  Website/Contact: http://www.robinrump.com/                            **
 **             Date: 28.08.13                                             **
-**          Version: 1.0.0                                                **
+**          Version: 1.0.8                                                **
 ****************************************************************************/
 
 #include "mainwindow.h"
@@ -31,7 +31,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    this->setWindowTitle("HodgkinHuxley Simulator 1.0.7 - Robin Rump");
+    this->setWindowTitle("HodgkinHuxley Simulator 1.0.8 - Robin Rump");
     this->setMinimumWidth(800);
     this->setMinimumHeight(630);
 
