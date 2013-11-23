@@ -20,7 +20,7 @@
 **           Author: Robin Rump                                           **
 **  Website/Contact: http://www.robinrump.com/                            **
 **             Date: 28.08.13                                             **
-**          Version: 1.0.0                                                **
+**          Version: 1.0.8                                                **
 ****************************************************************************/
 
 #include "mainwindow.h"
@@ -28,17 +28,20 @@
 #include "qcustomplot.h"
 
 MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    this->setWindowTitle("HodgkinHuxley Simulator 1.0.7 - Robin Rump");
+    this->setWindowTitle("HodgkinHuxley Simulator 1.0.8 - Robin Rump");
     this->setMinimumWidth(800);
     this->setMinimumHeight(630);
 
+    // setup windows and config
+    this->p = new Preferences(this);
+    this->w = new Welcome(this);
+    this->config = new Config();
+
     // setup variables and sliders
     this->timer = new QTimer(this);
-    this->config = new QFile(QDir::toNativeSeparators(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + "/com.robinrump.hodgkinhuxley.json"));
 
     this->blank.resize(1);
     this->dt       = 0.025;  // ms
@@ -69,10 +72,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // prepare simulator
     this->init();
-
-    // init windows
-    this->p = new Preferences(this);
-    this->w = new Welcome(this);
 
     // define the pointers
     this->values.resize(5);
@@ -130,19 +129,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->plot->yAxis2->setRange(0, 1);
     ui->plot->replot();
 
-    // config
-    QJsonObject json;
-    if (this->config->exists()) {
-        json = this->fromConfig();
-        this->pref = json.value("settings").toObject();
-    } else {
-        QJsonObject p;
-        p.insert("startup", true);
-        json.insert("preferences", p);
-        json.insert("version", 107);
-        this->toConfig(json);
-    }
-
     // connect ui elements with slots
     connect(ui->currentSlider, SIGNAL(valueChanged(int)), this, SLOT(updateCurrent()));
     connect(ui->gNaSlider, SIGNAL(valueChanged(int)), this, SLOT(updateGNa()));
@@ -177,14 +163,21 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->plot->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(ui->plot, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuRequest(QPoint)));
 
-    // connect and start timer
+    // connect timer
     connect(this->timer, SIGNAL(timeout()), this, SLOT(updatePlot()));
+
+    if (this->config->startup() == true) {
+        this->welcome();
+    }
+
+    // start timer
     this->timer->start(this->interval);
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+    this->config->write();
 }
 
 void MainWindow::init()
@@ -279,36 +272,6 @@ void MainWindow::contextMenuRequest(QPoint pos)
     menu->addSeparator();
     menu->addAction("Settings", this, SLOT(settings()));
     menu->popup(ui->plot->mapToGlobal(pos));
-}
-
-QJsonObject MainWindow::fromConfig()
-{
-    QJsonDocument document;
-    QByteArray bytes;
-    if (!this->config->open(QIODevice::ReadOnly | QIODevice::Text)) {
-        return QJsonObject();
-    }
-    bytes = this->config->readAll();
-    this->config->close();
-    document = QJsonDocument::fromJson(bytes);
-    return document.object();
-}
-
-bool MainWindow::toConfig(QJsonObject j)
-{
-    QJsonDocument document(j);
-    QByteArray bytes = document.toJson();
-    if (!this->config->open(QIODevice::WriteOnly | QIODevice::Text)) {
-        return false;
-    }
-    this->config->write(bytes);
-    this->config->close();
-    return true;
-}
-
-QJsonValue MainWindow::preference(QString key)
-{
-    return this->pref.value(key);
 }
 
 void MainWindow::updateCurrent()

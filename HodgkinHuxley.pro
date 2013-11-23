@@ -4,6 +4,8 @@
 #
 #-------------------------------------------------
 
+cache()
+
 QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
@@ -16,12 +18,14 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     qcustomplot.cpp \
     welcome.cpp \
-    preferences.cpp
+    preferences.cpp \
+    config.cpp
 
 HEADERS  += mainwindow.h \
     qcustomplot.h \
     welcome.h \
-    preferences.h
+    preferences.h \
+    config.h
 
 FORMS    += mainwindow.ui \
     welcome.ui \
