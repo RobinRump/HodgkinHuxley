@@ -1,6 +1,10 @@
 Changelog
 =============
 
+#### 1.0.8
+- Changed: Config system prepared for 1.1 release.
+- Fixed: Font bug that caused crashes on OS X Mavericks.
+
 #### 1.0.7
 - Fixed: Optimized some code.
 - Fixed: Multiple bugs.
